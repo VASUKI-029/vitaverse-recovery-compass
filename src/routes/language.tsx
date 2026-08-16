@@ -1,9 +1,11 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { setState } from "@/lib/vitaverse-store";
 
 const LANGUAGES = [
   { code: "en", label: "English", native: "English" },
   { code: "hi", label: "Hindi", native: "हिन्दी" },
+  { code: "ta", label: "Tamil", native: "தமிழ்" },
   { code: "es", label: "Spanish", native: "Español" },
   { code: "fr", label: "French", native: "Français" },
   { code: "de", label: "German", native: "Deutsch" },
@@ -27,6 +29,7 @@ export const Route = createFileRoute("/language")({
 
 function LanguageSelection() {
   const [selected, setSelected] = useState("en");
+  const navigate = useNavigate();
 
   return (
     <main className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-background px-6 py-16">
@@ -68,7 +71,12 @@ function LanguageSelection() {
           })}
         </div>
 
-        <button className="mt-12 rounded-full bg-primary px-10 py-3.5 text-xs uppercase tracking-[0.3em] text-primary-foreground transition-opacity duration-300 hover:opacity-90">
+        <button
+          onClick={() => {
+            setState({ language: selected });
+            navigate({ to: "/role" });
+          }}
+          className="mt-12 rounded-full bg-primary px-10 py-3.5 text-xs uppercase tracking-[0.3em] text-primary-foreground transition-opacity duration-300 hover:opacity-90">
           Continue
         </button>
       </div>

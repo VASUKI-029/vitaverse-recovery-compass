@@ -63,6 +63,8 @@
   --font-sans: "Jost", ui-sans-serif, system-ui, sans-serif;
   --color-champagne: var(--champagne);
   --color-gold: var(--gold);
+  --color-teal: var(--teal);
+  --color-rose: var(--rose);
 }
 
 :root {
@@ -71,6 +73,8 @@
   --foreground: oklch(0.28 0.02 70);
   --champagne: oklch(0.93 0.03 88);
   --gold: oklch(0.72 0.07 78);
+  --teal: oklch(0.42 0.065 190);
+  --rose: oklch(0.72 0.085 40);
   --card: oklch(0.98 0.008 92);
   --card-foreground: oklch(0.28 0.02 70);
   --popover: oklch(0.98 0.008 92);
@@ -187,4 +191,24 @@
 @utility splash-title {
   font-family: var(--font-display);
   animation: splash-rise 1100ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes vv-rise {
+  0% { opacity: 0; transform: translateY(16px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes vv-pop {
+  0% { opacity: 0; transform: translateY(10px) scale(0.9); }
+  30% { opacity: 1; transform: translateY(-6px) scale(1.05); }
+  100% { opacity: 0; transform: translateY(-42px) scale(1); }
+}
+@keyframes vv-ring {
+  0% { stroke-dashoffset: var(--dash-from, 999); }
+  100% { stroke-dashoffset: var(--dash-to, 0); }
+}
+@utility vv-enter {
+  animation: vv-rise 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@utility vv-display {
+  font-family: var(--font-display);
 }
