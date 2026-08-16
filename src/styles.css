@@ -149,3 +149,42 @@
     color: var(--color-foreground);
   }
 }
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@keyframes splash-rise {
+  0% { opacity: 0; transform: translateY(14px) scale(0.985); letter-spacing: 0.42em; }
+  100% { opacity: 1; transform: translateY(0) scale(1); letter-spacing: 0.3em; }
+}
+@keyframes splash-soft-in {
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes splash-breathe {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.012); opacity: 0.94; }
+}
+@keyframes splash-halo {
+  0% { opacity: 0; transform: scale(0.88) rotate(0deg); }
+  55% { opacity: 0.75; }
+  100% { opacity: 0.55; transform: scale(1) rotate(180deg); }
+}
+@keyframes splash-drift {
+  0% { transform: translateY(0); opacity: 0; }
+  35% { opacity: 0.6; }
+  100% { transform: translateY(-38px); opacity: 0; }
+}
+@keyframes splash-rule {
+  0% { transform: scaleX(0); opacity: 0; }
+  100% { transform: scaleX(1); opacity: 1; }
+}
+
+@utility splash-title {
+  font-family: var(--font-display);
+  animation: splash-rise 1100ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
