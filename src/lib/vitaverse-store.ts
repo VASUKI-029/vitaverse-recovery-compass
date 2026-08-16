@@ -224,8 +224,8 @@ export function insightFor(s: VitaState): string {
     ["recovery confidence", m.confidence],
   ];
   entries.sort((a, b) => a[1] - b[1]);
-  const weakest = entries[0];
-  const strongest = entries[entries.length - 1];
+  const weakest = entries[0]!;
+  const strongest = entries[entries.length - 1]!;
   if (m.fatigue > 65)
     return `Your fatigue reading is high today — shorter sessions with longer rest are recommended before focusing on ${weakest[0]}.`;
   return `Your ${strongest[0]} is your strongest signal at ${strongest[1]}%. Today's plan focuses on ${weakest[0]}, currently ${weakest[1]}%.`;
