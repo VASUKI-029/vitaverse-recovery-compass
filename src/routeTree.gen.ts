@@ -16,6 +16,7 @@ import { Route as LoginAdminRouteImport } from './routes/login.admin'
 import { Route as LoginCaregiverRouteImport } from './routes/login.caregiver'
 import { Route as LoginDoctorRouteImport } from './routes/login.doctor'
 import { Route as LoginPatientRouteImport } from './routes/login.patient'
+import { Route as PatientSummaryRouteImport } from './routes/patient.summary'
 import { Route as PatientWelcomeRouteImport } from './routes/patient.welcome'
 import { Route as PatientAssessmentIndexRouteImport } from './routes/patient.assessment.index'
 import { Route as PatientAssessmentStepRouteImport } from './routes/patient.assessment.$step'
@@ -55,6 +56,11 @@ const LoginPatientRoute = LoginPatientRouteImport.update({
   path: '/login/patient',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PatientSummaryRoute = PatientSummaryRouteImport.update({
+  id: '/patient/summary',
+  path: '/patient/summary',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PatientWelcomeRoute = PatientWelcomeRouteImport.update({
   id: '/patient/welcome',
   path: '/patient/welcome',
@@ -79,6 +85,7 @@ export interface FileRoutesByFullPath {
   '/login/caregiver': typeof LoginCaregiverRoute
   '/login/doctor': typeof LoginDoctorRoute
   '/login/patient': typeof LoginPatientRoute
+  '/patient/summary': typeof PatientSummaryRoute
   '/patient/welcome': typeof PatientWelcomeRoute
   '/patient/assessment/$step': typeof PatientAssessmentStepRoute
   '/patient/assessment/': typeof PatientAssessmentIndexRoute
@@ -91,6 +98,7 @@ export interface FileRoutesByTo {
   '/login/caregiver': typeof LoginCaregiverRoute
   '/login/doctor': typeof LoginDoctorRoute
   '/login/patient': typeof LoginPatientRoute
+  '/patient/summary': typeof PatientSummaryRoute
   '/patient/welcome': typeof PatientWelcomeRoute
   '/patient/assessment/$step': typeof PatientAssessmentStepRoute
   '/patient/assessment': typeof PatientAssessmentIndexRoute
@@ -104,6 +112,7 @@ export interface FileRoutesById {
   '/login/caregiver': typeof LoginCaregiverRoute
   '/login/doctor': typeof LoginDoctorRoute
   '/login/patient': typeof LoginPatientRoute
+  '/patient/summary': typeof PatientSummaryRoute
   '/patient/welcome': typeof PatientWelcomeRoute
   '/patient/assessment/$step': typeof PatientAssessmentStepRoute
   '/patient/assessment/': typeof PatientAssessmentIndexRoute
@@ -118,6 +127,7 @@ export interface FileRouteTypes {
     | '/login/caregiver'
     | '/login/doctor'
     | '/login/patient'
+    | '/patient/summary'
     | '/patient/welcome'
     | '/patient/assessment/$step'
     | '/patient/assessment/'
@@ -130,6 +140,7 @@ export interface FileRouteTypes {
     | '/login/caregiver'
     | '/login/doctor'
     | '/login/patient'
+    | '/patient/summary'
     | '/patient/welcome'
     | '/patient/assessment/$step'
     | '/patient/assessment'
@@ -142,6 +153,7 @@ export interface FileRouteTypes {
     | '/login/caregiver'
     | '/login/doctor'
     | '/login/patient'
+    | '/patient/summary'
     | '/patient/welcome'
     | '/patient/assessment/$step'
     | '/patient/assessment/'
@@ -155,6 +167,7 @@ export interface RootRouteChildren {
   LoginCaregiverRoute: typeof LoginCaregiverRoute
   LoginDoctorRoute: typeof LoginDoctorRoute
   LoginPatientRoute: typeof LoginPatientRoute
+  PatientSummaryRoute: typeof PatientSummaryRoute
   PatientWelcomeRoute: typeof PatientWelcomeRoute
   PatientAssessmentStepRoute: typeof PatientAssessmentStepRoute
   PatientAssessmentIndexRoute: typeof PatientAssessmentIndexRoute
@@ -211,6 +224,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginPatientRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/patient/summary': {
+      id: '/patient/summary'
+      path: '/patient/summary'
+      fullPath: '/patient/summary'
+      preLoaderRoute: typeof PatientSummaryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/patient/welcome': {
       id: '/patient/welcome'
       path: '/patient/welcome'
@@ -243,6 +263,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginCaregiverRoute: LoginCaregiverRoute,
   LoginDoctorRoute: LoginDoctorRoute,
   LoginPatientRoute: LoginPatientRoute,
+  PatientSummaryRoute: PatientSummaryRoute,
   PatientWelcomeRoute: PatientWelcomeRoute,
   PatientAssessmentStepRoute: PatientAssessmentStepRoute,
   PatientAssessmentIndexRoute: PatientAssessmentIndexRoute,
