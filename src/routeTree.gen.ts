@@ -20,6 +20,7 @@ import { Route as PatientPlanRouteImport } from './routes/patient.plan'
 import { Route as PatientSummaryRouteImport } from './routes/patient.summary'
 import { Route as PatientTwinRouteImport } from './routes/patient.twin'
 import { Route as PatientWelcomeRouteImport } from './routes/patient.welcome'
+import { Route as PatientActivityActivityIdRouteImport } from './routes/patient.activity.$activityId'
 import { Route as PatientAssessmentIndexRouteImport } from './routes/patient.assessment.index'
 import { Route as PatientAssessmentStepRouteImport } from './routes/patient.assessment.$step'
 
@@ -78,6 +79,12 @@ const PatientWelcomeRoute = PatientWelcomeRouteImport.update({
   path: '/patient/welcome',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PatientActivityActivityIdRoute =
+  PatientActivityActivityIdRouteImport.update({
+    id: '/patient/activity/$activityId',
+    path: '/patient/activity/$activityId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const PatientAssessmentIndexRoute = PatientAssessmentIndexRouteImport.update({
   id: '/patient/assessment/',
   path: '/patient/assessment/',
@@ -101,6 +108,7 @@ export interface FileRoutesByFullPath {
   '/patient/summary': typeof PatientSummaryRoute
   '/patient/twin': typeof PatientTwinRoute
   '/patient/welcome': typeof PatientWelcomeRoute
+  '/patient/activity/$activityId': typeof PatientActivityActivityIdRoute
   '/patient/assessment/$step': typeof PatientAssessmentStepRoute
   '/patient/assessment/': typeof PatientAssessmentIndexRoute
 }
@@ -116,6 +124,7 @@ export interface FileRoutesByTo {
   '/patient/summary': typeof PatientSummaryRoute
   '/patient/twin': typeof PatientTwinRoute
   '/patient/welcome': typeof PatientWelcomeRoute
+  '/patient/activity/$activityId': typeof PatientActivityActivityIdRoute
   '/patient/assessment/$step': typeof PatientAssessmentStepRoute
   '/patient/assessment': typeof PatientAssessmentIndexRoute
 }
@@ -132,6 +141,7 @@ export interface FileRoutesById {
   '/patient/summary': typeof PatientSummaryRoute
   '/patient/twin': typeof PatientTwinRoute
   '/patient/welcome': typeof PatientWelcomeRoute
+  '/patient/activity/$activityId': typeof PatientActivityActivityIdRoute
   '/patient/assessment/$step': typeof PatientAssessmentStepRoute
   '/patient/assessment/': typeof PatientAssessmentIndexRoute
 }
@@ -149,6 +159,7 @@ export interface FileRouteTypes {
     | '/patient/summary'
     | '/patient/twin'
     | '/patient/welcome'
+    | '/patient/activity/$activityId'
     | '/patient/assessment/$step'
     | '/patient/assessment/'
   fileRoutesByTo: FileRoutesByTo
@@ -164,6 +175,7 @@ export interface FileRouteTypes {
     | '/patient/summary'
     | '/patient/twin'
     | '/patient/welcome'
+    | '/patient/activity/$activityId'
     | '/patient/assessment/$step'
     | '/patient/assessment'
   id:
@@ -179,6 +191,7 @@ export interface FileRouteTypes {
     | '/patient/summary'
     | '/patient/twin'
     | '/patient/welcome'
+    | '/patient/activity/$activityId'
     | '/patient/assessment/$step'
     | '/patient/assessment/'
   fileRoutesById: FileRoutesById
@@ -195,6 +208,7 @@ export interface RootRouteChildren {
   PatientSummaryRoute: typeof PatientSummaryRoute
   PatientTwinRoute: typeof PatientTwinRoute
   PatientWelcomeRoute: typeof PatientWelcomeRoute
+  PatientActivityActivityIdRoute: typeof PatientActivityActivityIdRoute
   PatientAssessmentStepRoute: typeof PatientAssessmentStepRoute
   PatientAssessmentIndexRoute: typeof PatientAssessmentIndexRoute
 }
@@ -278,6 +292,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PatientWelcomeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/patient/activity/$activityId': {
+      id: '/patient/activity/$activityId'
+      path: '/patient/activity/$activityId'
+      fullPath: '/patient/activity/$activityId'
+      preLoaderRoute: typeof PatientActivityActivityIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/patient/assessment/': {
       id: '/patient/assessment/'
       path: '/patient/assessment'
@@ -307,6 +328,7 @@ const rootRouteChildren: RootRouteChildren = {
   PatientSummaryRoute: PatientSummaryRoute,
   PatientTwinRoute: PatientTwinRoute,
   PatientWelcomeRoute: PatientWelcomeRoute,
+  PatientActivityActivityIdRoute: PatientActivityActivityIdRoute,
   PatientAssessmentStepRoute: PatientAssessmentStepRoute,
   PatientAssessmentIndexRoute: PatientAssessmentIndexRoute,
 }
