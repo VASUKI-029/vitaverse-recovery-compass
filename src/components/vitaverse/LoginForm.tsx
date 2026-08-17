@@ -6,7 +6,7 @@ import { setState, type VitaState } from "@/lib/vitaverse-store";
 export type LoginConfig = {
   title: string;
   subtitle: string;
-  fields: [{ label: string; value: string }, { label: string; value: string; password?: boolean }];
+  fields: [{ label: string; value: string; password?: boolean }, { label: string; value: string; password?: boolean }];
   cta: string;
   role: NonNullable<VitaState["role"]>;
   next: string;
