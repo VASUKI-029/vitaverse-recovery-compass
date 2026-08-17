@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LanguageRouteImport } from './routes/language'
 import { Route as RoleRouteImport } from './routes/role'
+import { Route as LoginAdminRouteImport } from './routes/login.admin'
 import { Route as LoginCaregiverRouteImport } from './routes/login.caregiver'
 import { Route as LoginDoctorRouteImport } from './routes/login.doctor'
 import { Route as LoginPatientRouteImport } from './routes/login.patient'
@@ -29,6 +30,11 @@ const LanguageRoute = LanguageRouteImport.update({
 const RoleRoute = RoleRouteImport.update({
   id: '/role',
   path: '/role',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginAdminRoute = LoginAdminRouteImport.update({
+  id: '/login/admin',
+  path: '/login/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginCaregiverRoute = LoginCaregiverRouteImport.update({
@@ -51,6 +57,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/language': typeof LanguageRoute
   '/role': typeof RoleRoute
+  '/login/admin': typeof LoginAdminRoute
   '/login/caregiver': typeof LoginCaregiverRoute
   '/login/doctor': typeof LoginDoctorRoute
   '/login/patient': typeof LoginPatientRoute
@@ -59,6 +66,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/language': typeof LanguageRoute
   '/role': typeof RoleRoute
+  '/login/admin': typeof LoginAdminRoute
   '/login/caregiver': typeof LoginCaregiverRoute
   '/login/doctor': typeof LoginDoctorRoute
   '/login/patient': typeof LoginPatientRoute
@@ -68,6 +76,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/language': typeof LanguageRoute
   '/role': typeof RoleRoute
+  '/login/admin': typeof LoginAdminRoute
   '/login/caregiver': typeof LoginCaregiverRoute
   '/login/doctor': typeof LoginDoctorRoute
   '/login/patient': typeof LoginPatientRoute
@@ -78,6 +87,7 @@ export interface FileRouteTypes {
     | '/'
     | '/language'
     | '/role'
+    | '/login/admin'
     | '/login/caregiver'
     | '/login/doctor'
     | '/login/patient'
@@ -86,6 +96,7 @@ export interface FileRouteTypes {
     | '/'
     | '/language'
     | '/role'
+    | '/login/admin'
     | '/login/caregiver'
     | '/login/doctor'
     | '/login/patient'
@@ -94,6 +105,7 @@ export interface FileRouteTypes {
     | '/'
     | '/language'
     | '/role'
+    | '/login/admin'
     | '/login/caregiver'
     | '/login/doctor'
     | '/login/patient'
@@ -103,6 +115,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LanguageRoute: typeof LanguageRoute
   RoleRoute: typeof RoleRoute
+  LoginAdminRoute: typeof LoginAdminRoute
   LoginCaregiverRoute: typeof LoginCaregiverRoute
   LoginDoctorRoute: typeof LoginDoctorRoute
   LoginPatientRoute: typeof LoginPatientRoute
@@ -129,6 +142,13 @@ declare module '@tanstack/react-router' {
       path: '/role'
       fullPath: '/role'
       preLoaderRoute: typeof RoleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login/admin': {
+      id: '/login/admin'
+      path: '/login/admin'
+      fullPath: '/login/admin'
+      preLoaderRoute: typeof LoginAdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login/caregiver': {
@@ -159,6 +179,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LanguageRoute: LanguageRoute,
   RoleRoute: RoleRoute,
+  LoginAdminRoute: LoginAdminRoute,
   LoginCaregiverRoute: LoginCaregiverRoute,
   LoginDoctorRoute: LoginDoctorRoute,
   LoginPatientRoute: LoginPatientRoute,
