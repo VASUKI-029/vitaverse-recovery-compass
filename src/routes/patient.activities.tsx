@@ -13,7 +13,7 @@ export const Route = createFileRoute("/patient/activities")({
       { property: "og:description", content: "Your full library of recovery activities." },
     ],
   }),
-  component: Activities;
+  component: Activities,
 });
 
 function Activities() {
