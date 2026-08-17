@@ -17,6 +17,7 @@ import { Route as LoginCaregiverRouteImport } from './routes/login.caregiver'
 import { Route as LoginDoctorRouteImport } from './routes/login.doctor'
 import { Route as LoginPatientRouteImport } from './routes/login.patient'
 import { Route as PatientSummaryRouteImport } from './routes/patient.summary'
+import { Route as PatientTwinRouteImport } from './routes/patient.twin'
 import { Route as PatientWelcomeRouteImport } from './routes/patient.welcome'
 import { Route as PatientAssessmentIndexRouteImport } from './routes/patient.assessment.index'
 import { Route as PatientAssessmentStepRouteImport } from './routes/patient.assessment.$step'
@@ -61,6 +62,11 @@ const PatientSummaryRoute = PatientSummaryRouteImport.update({
   path: '/patient/summary',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PatientTwinRoute = PatientTwinRouteImport.update({
+  id: '/patient/twin',
+  path: '/patient/twin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PatientWelcomeRoute = PatientWelcomeRouteImport.update({
   id: '/patient/welcome',
   path: '/patient/welcome',
@@ -86,6 +92,7 @@ export interface FileRoutesByFullPath {
   '/login/doctor': typeof LoginDoctorRoute
   '/login/patient': typeof LoginPatientRoute
   '/patient/summary': typeof PatientSummaryRoute
+  '/patient/twin': typeof PatientTwinRoute
   '/patient/welcome': typeof PatientWelcomeRoute
   '/patient/assessment/$step': typeof PatientAssessmentStepRoute
   '/patient/assessment/': typeof PatientAssessmentIndexRoute
@@ -99,6 +106,7 @@ export interface FileRoutesByTo {
   '/login/doctor': typeof LoginDoctorRoute
   '/login/patient': typeof LoginPatientRoute
   '/patient/summary': typeof PatientSummaryRoute
+  '/patient/twin': typeof PatientTwinRoute
   '/patient/welcome': typeof PatientWelcomeRoute
   '/patient/assessment/$step': typeof PatientAssessmentStepRoute
   '/patient/assessment': typeof PatientAssessmentIndexRoute
@@ -113,6 +121,7 @@ export interface FileRoutesById {
   '/login/doctor': typeof LoginDoctorRoute
   '/login/patient': typeof LoginPatientRoute
   '/patient/summary': typeof PatientSummaryRoute
+  '/patient/twin': typeof PatientTwinRoute
   '/patient/welcome': typeof PatientWelcomeRoute
   '/patient/assessment/$step': typeof PatientAssessmentStepRoute
   '/patient/assessment/': typeof PatientAssessmentIndexRoute
@@ -128,6 +137,7 @@ export interface FileRouteTypes {
     | '/login/doctor'
     | '/login/patient'
     | '/patient/summary'
+    | '/patient/twin'
     | '/patient/welcome'
     | '/patient/assessment/$step'
     | '/patient/assessment/'
@@ -141,6 +151,7 @@ export interface FileRouteTypes {
     | '/login/doctor'
     | '/login/patient'
     | '/patient/summary'
+    | '/patient/twin'
     | '/patient/welcome'
     | '/patient/assessment/$step'
     | '/patient/assessment'
@@ -154,6 +165,7 @@ export interface FileRouteTypes {
     | '/login/doctor'
     | '/login/patient'
     | '/patient/summary'
+    | '/patient/twin'
     | '/patient/welcome'
     | '/patient/assessment/$step'
     | '/patient/assessment/'
@@ -168,6 +180,7 @@ export interface RootRouteChildren {
   LoginDoctorRoute: typeof LoginDoctorRoute
   LoginPatientRoute: typeof LoginPatientRoute
   PatientSummaryRoute: typeof PatientSummaryRoute
+  PatientTwinRoute: typeof PatientTwinRoute
   PatientWelcomeRoute: typeof PatientWelcomeRoute
   PatientAssessmentStepRoute: typeof PatientAssessmentStepRoute
   PatientAssessmentIndexRoute: typeof PatientAssessmentIndexRoute
@@ -231,6 +244,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PatientSummaryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/patient/twin': {
+      id: '/patient/twin'
+      path: '/patient/twin'
+      fullPath: '/patient/twin'
+      preLoaderRoute: typeof PatientTwinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/patient/welcome': {
       id: '/patient/welcome'
       path: '/patient/welcome'
@@ -264,6 +284,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginDoctorRoute: LoginDoctorRoute,
   LoginPatientRoute: LoginPatientRoute,
   PatientSummaryRoute: PatientSummaryRoute,
+  PatientTwinRoute: PatientTwinRoute,
   PatientWelcomeRoute: PatientWelcomeRoute,
   PatientAssessmentStepRoute: PatientAssessmentStepRoute,
   PatientAssessmentIndexRoute: PatientAssessmentIndexRoute,
