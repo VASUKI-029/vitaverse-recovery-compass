@@ -16,6 +16,7 @@ import { Route as LoginAdminRouteImport } from './routes/login.admin'
 import { Route as LoginCaregiverRouteImport } from './routes/login.caregiver'
 import { Route as LoginDoctorRouteImport } from './routes/login.doctor'
 import { Route as LoginPatientRouteImport } from './routes/login.patient'
+import { Route as PatientPlanRouteImport } from './routes/patient.plan'
 import { Route as PatientSummaryRouteImport } from './routes/patient.summary'
 import { Route as PatientTwinRouteImport } from './routes/patient.twin'
 import { Route as PatientWelcomeRouteImport } from './routes/patient.welcome'
@@ -57,6 +58,11 @@ const LoginPatientRoute = LoginPatientRouteImport.update({
   path: '/login/patient',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PatientPlanRoute = PatientPlanRouteImport.update({
+  id: '/patient/plan',
+  path: '/patient/plan',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PatientSummaryRoute = PatientSummaryRouteImport.update({
   id: '/patient/summary',
   path: '/patient/summary',
@@ -91,6 +97,7 @@ export interface FileRoutesByFullPath {
   '/login/caregiver': typeof LoginCaregiverRoute
   '/login/doctor': typeof LoginDoctorRoute
   '/login/patient': typeof LoginPatientRoute
+  '/patient/plan': typeof PatientPlanRoute
   '/patient/summary': typeof PatientSummaryRoute
   '/patient/twin': typeof PatientTwinRoute
   '/patient/welcome': typeof PatientWelcomeRoute
@@ -105,6 +112,7 @@ export interface FileRoutesByTo {
   '/login/caregiver': typeof LoginCaregiverRoute
   '/login/doctor': typeof LoginDoctorRoute
   '/login/patient': typeof LoginPatientRoute
+  '/patient/plan': typeof PatientPlanRoute
   '/patient/summary': typeof PatientSummaryRoute
   '/patient/twin': typeof PatientTwinRoute
   '/patient/welcome': typeof PatientWelcomeRoute
@@ -120,6 +128,7 @@ export interface FileRoutesById {
   '/login/caregiver': typeof LoginCaregiverRoute
   '/login/doctor': typeof LoginDoctorRoute
   '/login/patient': typeof LoginPatientRoute
+  '/patient/plan': typeof PatientPlanRoute
   '/patient/summary': typeof PatientSummaryRoute
   '/patient/twin': typeof PatientTwinRoute
   '/patient/welcome': typeof PatientWelcomeRoute
@@ -136,6 +145,7 @@ export interface FileRouteTypes {
     | '/login/caregiver'
     | '/login/doctor'
     | '/login/patient'
+    | '/patient/plan'
     | '/patient/summary'
     | '/patient/twin'
     | '/patient/welcome'
@@ -150,6 +160,7 @@ export interface FileRouteTypes {
     | '/login/caregiver'
     | '/login/doctor'
     | '/login/patient'
+    | '/patient/plan'
     | '/patient/summary'
     | '/patient/twin'
     | '/patient/welcome'
@@ -164,6 +175,7 @@ export interface FileRouteTypes {
     | '/login/caregiver'
     | '/login/doctor'
     | '/login/patient'
+    | '/patient/plan'
     | '/patient/summary'
     | '/patient/twin'
     | '/patient/welcome'
@@ -179,6 +191,7 @@ export interface RootRouteChildren {
   LoginCaregiverRoute: typeof LoginCaregiverRoute
   LoginDoctorRoute: typeof LoginDoctorRoute
   LoginPatientRoute: typeof LoginPatientRoute
+  PatientPlanRoute: typeof PatientPlanRoute
   PatientSummaryRoute: typeof PatientSummaryRoute
   PatientTwinRoute: typeof PatientTwinRoute
   PatientWelcomeRoute: typeof PatientWelcomeRoute
@@ -237,6 +250,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginPatientRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/patient/plan': {
+      id: '/patient/plan'
+      path: '/patient/plan'
+      fullPath: '/patient/plan'
+      preLoaderRoute: typeof PatientPlanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/patient/summary': {
       id: '/patient/summary'
       path: '/patient/summary'
@@ -283,6 +303,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginCaregiverRoute: LoginCaregiverRoute,
   LoginDoctorRoute: LoginDoctorRoute,
   LoginPatientRoute: LoginPatientRoute,
+  PatientPlanRoute: PatientPlanRoute,
   PatientSummaryRoute: PatientSummaryRoute,
   PatientTwinRoute: PatientTwinRoute,
   PatientWelcomeRoute: PatientWelcomeRoute,
