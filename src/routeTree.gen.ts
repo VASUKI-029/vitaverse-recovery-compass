@@ -16,6 +16,7 @@ import { Route as LoginAdminRouteImport } from './routes/login.admin'
 import { Route as LoginCaregiverRouteImport } from './routes/login.caregiver'
 import { Route as LoginDoctorRouteImport } from './routes/login.doctor'
 import { Route as LoginPatientRouteImport } from './routes/login.patient'
+import { Route as PatientHomeRouteImport } from './routes/patient.home'
 import { Route as PatientPlanRouteImport } from './routes/patient.plan'
 import { Route as PatientSummaryRouteImport } from './routes/patient.summary'
 import { Route as PatientTwinRouteImport } from './routes/patient.twin'
@@ -57,6 +58,11 @@ const LoginDoctorRoute = LoginDoctorRouteImport.update({
 const LoginPatientRoute = LoginPatientRouteImport.update({
   id: '/login/patient',
   path: '/login/patient',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PatientHomeRoute = PatientHomeRouteImport.update({
+  id: '/patient/home',
+  path: '/patient/home',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PatientPlanRoute = PatientPlanRouteImport.update({
@@ -104,6 +110,7 @@ export interface FileRoutesByFullPath {
   '/login/caregiver': typeof LoginCaregiverRoute
   '/login/doctor': typeof LoginDoctorRoute
   '/login/patient': typeof LoginPatientRoute
+  '/patient/home': typeof PatientHomeRoute
   '/patient/plan': typeof PatientPlanRoute
   '/patient/summary': typeof PatientSummaryRoute
   '/patient/twin': typeof PatientTwinRoute
@@ -120,6 +127,7 @@ export interface FileRoutesByTo {
   '/login/caregiver': typeof LoginCaregiverRoute
   '/login/doctor': typeof LoginDoctorRoute
   '/login/patient': typeof LoginPatientRoute
+  '/patient/home': typeof PatientHomeRoute
   '/patient/plan': typeof PatientPlanRoute
   '/patient/summary': typeof PatientSummaryRoute
   '/patient/twin': typeof PatientTwinRoute
@@ -137,6 +145,7 @@ export interface FileRoutesById {
   '/login/caregiver': typeof LoginCaregiverRoute
   '/login/doctor': typeof LoginDoctorRoute
   '/login/patient': typeof LoginPatientRoute
+  '/patient/home': typeof PatientHomeRoute
   '/patient/plan': typeof PatientPlanRoute
   '/patient/summary': typeof PatientSummaryRoute
   '/patient/twin': typeof PatientTwinRoute
@@ -155,6 +164,7 @@ export interface FileRouteTypes {
     | '/login/caregiver'
     | '/login/doctor'
     | '/login/patient'
+    | '/patient/home'
     | '/patient/plan'
     | '/patient/summary'
     | '/patient/twin'
@@ -171,6 +181,7 @@ export interface FileRouteTypes {
     | '/login/caregiver'
     | '/login/doctor'
     | '/login/patient'
+    | '/patient/home'
     | '/patient/plan'
     | '/patient/summary'
     | '/patient/twin'
@@ -187,6 +198,7 @@ export interface FileRouteTypes {
     | '/login/caregiver'
     | '/login/doctor'
     | '/login/patient'
+    | '/patient/home'
     | '/patient/plan'
     | '/patient/summary'
     | '/patient/twin'
@@ -204,6 +216,7 @@ export interface RootRouteChildren {
   LoginCaregiverRoute: typeof LoginCaregiverRoute
   LoginDoctorRoute: typeof LoginDoctorRoute
   LoginPatientRoute: typeof LoginPatientRoute
+  PatientHomeRoute: typeof PatientHomeRoute
   PatientPlanRoute: typeof PatientPlanRoute
   PatientSummaryRoute: typeof PatientSummaryRoute
   PatientTwinRoute: typeof PatientTwinRoute
@@ -262,6 +275,13 @@ declare module '@tanstack/react-router' {
       path: '/login/patient'
       fullPath: '/login/patient'
       preLoaderRoute: typeof LoginPatientRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/patient/home': {
+      id: '/patient/home'
+      path: '/patient/home'
+      fullPath: '/patient/home'
+      preLoaderRoute: typeof PatientHomeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/patient/plan': {
@@ -324,6 +344,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginCaregiverRoute: LoginCaregiverRoute,
   LoginDoctorRoute: LoginDoctorRoute,
   LoginPatientRoute: LoginPatientRoute,
+  PatientHomeRoute: PatientHomeRoute,
   PatientPlanRoute: PatientPlanRoute,
   PatientSummaryRoute: PatientSummaryRoute,
   PatientTwinRoute: PatientTwinRoute,
