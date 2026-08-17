@@ -19,6 +19,7 @@ import { Route as LoginPatientRouteImport } from './routes/login.patient'
 import { Route as PatientActivitiesRouteImport } from './routes/patient.activities'
 import { Route as PatientHomeRouteImport } from './routes/patient.home'
 import { Route as PatientPlanRouteImport } from './routes/patient.plan'
+import { Route as PatientRecoveryRouteImport } from './routes/patient.recovery'
 import { Route as PatientSummaryRouteImport } from './routes/patient.summary'
 import { Route as PatientTwinRouteImport } from './routes/patient.twin'
 import { Route as PatientWelcomeRouteImport } from './routes/patient.welcome'
@@ -76,6 +77,11 @@ const PatientPlanRoute = PatientPlanRouteImport.update({
   path: '/patient/plan',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PatientRecoveryRoute = PatientRecoveryRouteImport.update({
+  id: '/patient/recovery',
+  path: '/patient/recovery',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PatientSummaryRoute = PatientSummaryRouteImport.update({
   id: '/patient/summary',
   path: '/patient/summary',
@@ -119,6 +125,7 @@ export interface FileRoutesByFullPath {
   '/patient/activities': typeof PatientActivitiesRoute
   '/patient/home': typeof PatientHomeRoute
   '/patient/plan': typeof PatientPlanRoute
+  '/patient/recovery': typeof PatientRecoveryRoute
   '/patient/summary': typeof PatientSummaryRoute
   '/patient/twin': typeof PatientTwinRoute
   '/patient/welcome': typeof PatientWelcomeRoute
@@ -137,6 +144,7 @@ export interface FileRoutesByTo {
   '/patient/activities': typeof PatientActivitiesRoute
   '/patient/home': typeof PatientHomeRoute
   '/patient/plan': typeof PatientPlanRoute
+  '/patient/recovery': typeof PatientRecoveryRoute
   '/patient/summary': typeof PatientSummaryRoute
   '/patient/twin': typeof PatientTwinRoute
   '/patient/welcome': typeof PatientWelcomeRoute
@@ -156,6 +164,7 @@ export interface FileRoutesById {
   '/patient/activities': typeof PatientActivitiesRoute
   '/patient/home': typeof PatientHomeRoute
   '/patient/plan': typeof PatientPlanRoute
+  '/patient/recovery': typeof PatientRecoveryRoute
   '/patient/summary': typeof PatientSummaryRoute
   '/patient/twin': typeof PatientTwinRoute
   '/patient/welcome': typeof PatientWelcomeRoute
@@ -176,6 +185,7 @@ export interface FileRouteTypes {
     | '/patient/activities'
     | '/patient/home'
     | '/patient/plan'
+    | '/patient/recovery'
     | '/patient/summary'
     | '/patient/twin'
     | '/patient/welcome'
@@ -194,6 +204,7 @@ export interface FileRouteTypes {
     | '/patient/activities'
     | '/patient/home'
     | '/patient/plan'
+    | '/patient/recovery'
     | '/patient/summary'
     | '/patient/twin'
     | '/patient/welcome'
@@ -212,6 +223,7 @@ export interface FileRouteTypes {
     | '/patient/activities'
     | '/patient/home'
     | '/patient/plan'
+    | '/patient/recovery'
     | '/patient/summary'
     | '/patient/twin'
     | '/patient/welcome'
@@ -231,6 +243,7 @@ export interface RootRouteChildren {
   PatientActivitiesRoute: typeof PatientActivitiesRoute
   PatientHomeRoute: typeof PatientHomeRoute
   PatientPlanRoute: typeof PatientPlanRoute
+  PatientRecoveryRoute: typeof PatientRecoveryRoute
   PatientSummaryRoute: typeof PatientSummaryRoute
   PatientTwinRoute: typeof PatientTwinRoute
   PatientWelcomeRoute: typeof PatientWelcomeRoute
@@ -311,6 +324,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PatientPlanRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/patient/recovery': {
+      id: '/patient/recovery'
+      path: '/patient/recovery'
+      fullPath: '/patient/recovery'
+      preLoaderRoute: typeof PatientRecoveryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/patient/summary': {
       id: '/patient/summary'
       path: '/patient/summary'
@@ -367,6 +387,7 @@ const rootRouteChildren: RootRouteChildren = {
   PatientActivitiesRoute: PatientActivitiesRoute,
   PatientHomeRoute: PatientHomeRoute,
   PatientPlanRoute: PatientPlanRoute,
+  PatientRecoveryRoute: PatientRecoveryRoute,
   PatientSummaryRoute: PatientSummaryRoute,
   PatientTwinRoute: PatientTwinRoute,
   PatientWelcomeRoute: PatientWelcomeRoute,
