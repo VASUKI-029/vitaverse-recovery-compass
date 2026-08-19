@@ -10,8 +10,11 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as CaregiverRouteImport } from './routes/caregiver'
 import { Route as LanguageRouteImport } from './routes/language'
 import { Route as RoleRouteImport } from './routes/role'
+import { Route as DoctorIndexRouteImport } from './routes/doctor.index'
 import { Route as LoginAdminRouteImport } from './routes/login.admin'
 import { Route as LoginCaregiverRouteImport } from './routes/login.caregiver'
 import { Route as LoginDoctorRouteImport } from './routes/login.doctor'
@@ -19,10 +22,12 @@ import { Route as LoginPatientRouteImport } from './routes/login.patient'
 import { Route as PatientActivitiesRouteImport } from './routes/patient.activities'
 import { Route as PatientHomeRouteImport } from './routes/patient.home'
 import { Route as PatientPlanRouteImport } from './routes/patient.plan'
+import { Route as PatientProfileRouteImport } from './routes/patient.profile'
 import { Route as PatientRecoveryRouteImport } from './routes/patient.recovery'
 import { Route as PatientSummaryRouteImport } from './routes/patient.summary'
 import { Route as PatientTwinRouteImport } from './routes/patient.twin'
 import { Route as PatientWelcomeRouteImport } from './routes/patient.welcome'
+import { Route as DoctorPatientPatientIdRouteImport } from './routes/doctor.patient.$patientId'
 import { Route as PatientActivityActivityIdRouteImport } from './routes/patient.activity.$activityId'
 import { Route as PatientAssessmentIndexRouteImport } from './routes/patient.assessment.index'
 import { Route as PatientAssessmentStepRouteImport } from './routes/patient.assessment.$step'
@@ -30,6 +35,16 @@ import { Route as PatientAssessmentStepRouteImport } from './routes/patient.asse
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CaregiverRoute = CaregiverRouteImport.update({
+  id: '/caregiver',
+  path: '/caregiver',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LanguageRoute = LanguageRouteImport.update({
@@ -40,6 +55,11 @@ const LanguageRoute = LanguageRouteImport.update({
 const RoleRoute = RoleRouteImport.update({
   id: '/role',
   path: '/role',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DoctorIndexRoute = DoctorIndexRouteImport.update({
+  id: '/doctor/',
+  path: '/doctor/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginAdminRoute = LoginAdminRouteImport.update({
@@ -77,6 +97,11 @@ const PatientPlanRoute = PatientPlanRouteImport.update({
   path: '/patient/plan',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PatientProfileRoute = PatientProfileRouteImport.update({
+  id: '/patient/profile',
+  path: '/patient/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PatientRecoveryRoute = PatientRecoveryRouteImport.update({
   id: '/patient/recovery',
   path: '/patient/recovery',
@@ -95,6 +120,11 @@ const PatientTwinRoute = PatientTwinRouteImport.update({
 const PatientWelcomeRoute = PatientWelcomeRouteImport.update({
   id: '/patient/welcome',
   path: '/patient/welcome',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DoctorPatientPatientIdRoute = DoctorPatientPatientIdRouteImport.update({
+  id: '/doctor/patient/$patientId',
+  path: '/doctor/patient/$patientId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PatientActivityActivityIdRoute =
@@ -116,6 +146,8 @@ const PatientAssessmentStepRoute = PatientAssessmentStepRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/caregiver': typeof CaregiverRoute
   '/language': typeof LanguageRoute
   '/role': typeof RoleRoute
   '/login/admin': typeof LoginAdminRoute
@@ -125,16 +157,21 @@ export interface FileRoutesByFullPath {
   '/patient/activities': typeof PatientActivitiesRoute
   '/patient/home': typeof PatientHomeRoute
   '/patient/plan': typeof PatientPlanRoute
+  '/patient/profile': typeof PatientProfileRoute
   '/patient/recovery': typeof PatientRecoveryRoute
   '/patient/summary': typeof PatientSummaryRoute
   '/patient/twin': typeof PatientTwinRoute
   '/patient/welcome': typeof PatientWelcomeRoute
+  '/doctor/': typeof DoctorIndexRoute
+  '/doctor/patient/$patientId': typeof DoctorPatientPatientIdRoute
   '/patient/activity/$activityId': typeof PatientActivityActivityIdRoute
   '/patient/assessment/$step': typeof PatientAssessmentStepRoute
   '/patient/assessment/': typeof PatientAssessmentIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/caregiver': typeof CaregiverRoute
   '/language': typeof LanguageRoute
   '/role': typeof RoleRoute
   '/login/admin': typeof LoginAdminRoute
@@ -144,10 +181,13 @@ export interface FileRoutesByTo {
   '/patient/activities': typeof PatientActivitiesRoute
   '/patient/home': typeof PatientHomeRoute
   '/patient/plan': typeof PatientPlanRoute
+  '/patient/profile': typeof PatientProfileRoute
   '/patient/recovery': typeof PatientRecoveryRoute
   '/patient/summary': typeof PatientSummaryRoute
   '/patient/twin': typeof PatientTwinRoute
   '/patient/welcome': typeof PatientWelcomeRoute
+  '/doctor': typeof DoctorIndexRoute
+  '/doctor/patient/$patientId': typeof DoctorPatientPatientIdRoute
   '/patient/activity/$activityId': typeof PatientActivityActivityIdRoute
   '/patient/assessment/$step': typeof PatientAssessmentStepRoute
   '/patient/assessment': typeof PatientAssessmentIndexRoute
@@ -155,6 +195,8 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/caregiver': typeof CaregiverRoute
   '/language': typeof LanguageRoute
   '/role': typeof RoleRoute
   '/login/admin': typeof LoginAdminRoute
@@ -164,10 +206,13 @@ export interface FileRoutesById {
   '/patient/activities': typeof PatientActivitiesRoute
   '/patient/home': typeof PatientHomeRoute
   '/patient/plan': typeof PatientPlanRoute
+  '/patient/profile': typeof PatientProfileRoute
   '/patient/recovery': typeof PatientRecoveryRoute
   '/patient/summary': typeof PatientSummaryRoute
   '/patient/twin': typeof PatientTwinRoute
   '/patient/welcome': typeof PatientWelcomeRoute
+  '/doctor/': typeof DoctorIndexRoute
+  '/doctor/patient/$patientId': typeof DoctorPatientPatientIdRoute
   '/patient/activity/$activityId': typeof PatientActivityActivityIdRoute
   '/patient/assessment/$step': typeof PatientAssessmentStepRoute
   '/patient/assessment/': typeof PatientAssessmentIndexRoute
@@ -176,6 +221,8 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
+    | '/caregiver'
     | '/language'
     | '/role'
     | '/login/admin'
@@ -185,16 +232,21 @@ export interface FileRouteTypes {
     | '/patient/activities'
     | '/patient/home'
     | '/patient/plan'
+    | '/patient/profile'
     | '/patient/recovery'
     | '/patient/summary'
     | '/patient/twin'
     | '/patient/welcome'
+    | '/doctor/'
+    | '/doctor/patient/$patientId'
     | '/patient/activity/$activityId'
     | '/patient/assessment/$step'
     | '/patient/assessment/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin'
+    | '/caregiver'
     | '/language'
     | '/role'
     | '/login/admin'
@@ -204,16 +256,21 @@ export interface FileRouteTypes {
     | '/patient/activities'
     | '/patient/home'
     | '/patient/plan'
+    | '/patient/profile'
     | '/patient/recovery'
     | '/patient/summary'
     | '/patient/twin'
     | '/patient/welcome'
+    | '/doctor'
+    | '/doctor/patient/$patientId'
     | '/patient/activity/$activityId'
     | '/patient/assessment/$step'
     | '/patient/assessment'
   id:
     | '__root__'
     | '/'
+    | '/admin'
+    | '/caregiver'
     | '/language'
     | '/role'
     | '/login/admin'
@@ -223,10 +280,13 @@ export interface FileRouteTypes {
     | '/patient/activities'
     | '/patient/home'
     | '/patient/plan'
+    | '/patient/profile'
     | '/patient/recovery'
     | '/patient/summary'
     | '/patient/twin'
     | '/patient/welcome'
+    | '/doctor/'
+    | '/doctor/patient/$patientId'
     | '/patient/activity/$activityId'
     | '/patient/assessment/$step'
     | '/patient/assessment/'
@@ -234,6 +294,8 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
+  CaregiverRoute: typeof CaregiverRoute
   LanguageRoute: typeof LanguageRoute
   RoleRoute: typeof RoleRoute
   LoginAdminRoute: typeof LoginAdminRoute
@@ -243,10 +305,13 @@ export interface RootRouteChildren {
   PatientActivitiesRoute: typeof PatientActivitiesRoute
   PatientHomeRoute: typeof PatientHomeRoute
   PatientPlanRoute: typeof PatientPlanRoute
+  PatientProfileRoute: typeof PatientProfileRoute
   PatientRecoveryRoute: typeof PatientRecoveryRoute
   PatientSummaryRoute: typeof PatientSummaryRoute
   PatientTwinRoute: typeof PatientTwinRoute
   PatientWelcomeRoute: typeof PatientWelcomeRoute
+  DoctorIndexRoute: typeof DoctorIndexRoute
+  DoctorPatientPatientIdRoute: typeof DoctorPatientPatientIdRoute
   PatientActivityActivityIdRoute: typeof PatientActivityActivityIdRoute
   PatientAssessmentStepRoute: typeof PatientAssessmentStepRoute
   PatientAssessmentIndexRoute: typeof PatientAssessmentIndexRoute
@@ -261,6 +326,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/caregiver': {
+      id: '/caregiver'
+      path: '/caregiver'
+      fullPath: '/caregiver'
+      preLoaderRoute: typeof CaregiverRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/language': {
       id: '/language'
       path: '/language'
@@ -273,6 +352,13 @@ declare module '@tanstack/react-router' {
       path: '/role'
       fullPath: '/role'
       preLoaderRoute: typeof RoleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/doctor/': {
+      id: '/doctor/'
+      path: '/doctor'
+      fullPath: '/doctor/'
+      preLoaderRoute: typeof DoctorIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login/admin': {
@@ -324,6 +410,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PatientPlanRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/patient/profile': {
+      id: '/patient/profile'
+      path: '/patient/profile'
+      fullPath: '/patient/profile'
+      preLoaderRoute: typeof PatientProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/patient/recovery': {
       id: '/patient/recovery'
       path: '/patient/recovery'
@@ -352,6 +445,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PatientWelcomeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/doctor/patient/$patientId': {
+      id: '/doctor/patient/$patientId'
+      path: '/doctor/patient/$patientId'
+      fullPath: '/doctor/patient/$patientId'
+      preLoaderRoute: typeof DoctorPatientPatientIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/patient/activity/$activityId': {
       id: '/patient/activity/$activityId'
       path: '/patient/activity/$activityId'
@@ -378,6 +478,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
+  CaregiverRoute: CaregiverRoute,
   LanguageRoute: LanguageRoute,
   RoleRoute: RoleRoute,
   LoginAdminRoute: LoginAdminRoute,
@@ -387,10 +489,13 @@ const rootRouteChildren: RootRouteChildren = {
   PatientActivitiesRoute: PatientActivitiesRoute,
   PatientHomeRoute: PatientHomeRoute,
   PatientPlanRoute: PatientPlanRoute,
+  PatientProfileRoute: PatientProfileRoute,
   PatientRecoveryRoute: PatientRecoveryRoute,
   PatientSummaryRoute: PatientSummaryRoute,
   PatientTwinRoute: PatientTwinRoute,
   PatientWelcomeRoute: PatientWelcomeRoute,
+  DoctorIndexRoute: DoctorIndexRoute,
+  DoctorPatientPatientIdRoute: DoctorPatientPatientIdRoute,
   PatientActivityActivityIdRoute: PatientActivityActivityIdRoute,
   PatientAssessmentStepRoute: PatientAssessmentStepRoute,
   PatientAssessmentIndexRoute: PatientAssessmentIndexRoute,
