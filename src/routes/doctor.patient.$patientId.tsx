@@ -42,7 +42,7 @@ function PatientDetail() {
         </div>
         <Card className="space-y-6">
           <Meter label="Breathing Control" value={m.breathing} />
-          <Meter label="Activity Tolerance" value={m.tolerance} />
+          <Meter label="Activity Comfort" value={m.comfort} />
           <Meter label="Fatigue Load" value={m.fatigue} />
           <Meter label="Recovery Confidence" value={m.confidence} />
         </Card>
