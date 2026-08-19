@@ -25,6 +25,7 @@ import { Route as PatientRecoveryRouteImport } from './routes/patient.recovery'
 import { Route as PatientSummaryRouteImport } from './routes/patient.summary'
 import { Route as PatientTwinRouteImport } from './routes/patient.twin'
 import { Route as PatientWelcomeRouteImport } from './routes/patient.welcome'
+import { Route as DoctorPatientPatientIdRouteImport } from './routes/doctor.patient.$patientId'
 import { Route as PatientActivityActivityIdRouteImport } from './routes/patient.activity.$activityId'
 import { Route as PatientAssessmentIndexRouteImport } from './routes/patient.assessment.index'
 import { Route as PatientAssessmentStepRouteImport } from './routes/patient.assessment.$step'
@@ -109,6 +110,11 @@ const PatientWelcomeRoute = PatientWelcomeRouteImport.update({
   path: '/patient/welcome',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DoctorPatientPatientIdRoute = DoctorPatientPatientIdRouteImport.update({
+  id: '/doctor/patient/$patientId',
+  path: '/doctor/patient/$patientId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PatientActivityActivityIdRoute =
   PatientActivityActivityIdRouteImport.update({
     id: '/patient/activity/$activityId',
@@ -143,6 +149,7 @@ export interface FileRoutesByFullPath {
   '/patient/twin': typeof PatientTwinRoute
   '/patient/welcome': typeof PatientWelcomeRoute
   '/doctor/': typeof DoctorIndexRoute
+  '/doctor/patient/$patientId': typeof DoctorPatientPatientIdRoute
   '/patient/activity/$activityId': typeof PatientActivityActivityIdRoute
   '/patient/assessment/$step': typeof PatientAssessmentStepRoute
   '/patient/assessment/': typeof PatientAssessmentIndexRoute
@@ -164,6 +171,7 @@ export interface FileRoutesByTo {
   '/patient/twin': typeof PatientTwinRoute
   '/patient/welcome': typeof PatientWelcomeRoute
   '/doctor': typeof DoctorIndexRoute
+  '/doctor/patient/$patientId': typeof DoctorPatientPatientIdRoute
   '/patient/activity/$activityId': typeof PatientActivityActivityIdRoute
   '/patient/assessment/$step': typeof PatientAssessmentStepRoute
   '/patient/assessment': typeof PatientAssessmentIndexRoute
@@ -186,6 +194,7 @@ export interface FileRoutesById {
   '/patient/twin': typeof PatientTwinRoute
   '/patient/welcome': typeof PatientWelcomeRoute
   '/doctor/': typeof DoctorIndexRoute
+  '/doctor/patient/$patientId': typeof DoctorPatientPatientIdRoute
   '/patient/activity/$activityId': typeof PatientActivityActivityIdRoute
   '/patient/assessment/$step': typeof PatientAssessmentStepRoute
   '/patient/assessment/': typeof PatientAssessmentIndexRoute
@@ -209,6 +218,7 @@ export interface FileRouteTypes {
     | '/patient/twin'
     | '/patient/welcome'
     | '/doctor/'
+    | '/doctor/patient/$patientId'
     | '/patient/activity/$activityId'
     | '/patient/assessment/$step'
     | '/patient/assessment/'
@@ -230,6 +240,7 @@ export interface FileRouteTypes {
     | '/patient/twin'
     | '/patient/welcome'
     | '/doctor'
+    | '/doctor/patient/$patientId'
     | '/patient/activity/$activityId'
     | '/patient/assessment/$step'
     | '/patient/assessment'
@@ -251,6 +262,7 @@ export interface FileRouteTypes {
     | '/patient/twin'
     | '/patient/welcome'
     | '/doctor/'
+    | '/doctor/patient/$patientId'
     | '/patient/activity/$activityId'
     | '/patient/assessment/$step'
     | '/patient/assessment/'
@@ -273,6 +285,7 @@ export interface RootRouteChildren {
   PatientTwinRoute: typeof PatientTwinRoute
   PatientWelcomeRoute: typeof PatientWelcomeRoute
   DoctorIndexRoute: typeof DoctorIndexRoute
+  DoctorPatientPatientIdRoute: typeof DoctorPatientPatientIdRoute
   PatientActivityActivityIdRoute: typeof PatientActivityActivityIdRoute
   PatientAssessmentStepRoute: typeof PatientAssessmentStepRoute
   PatientAssessmentIndexRoute: typeof PatientAssessmentIndexRoute
@@ -392,6 +405,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PatientWelcomeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/doctor/patient/$patientId': {
+      id: '/doctor/patient/$patientId'
+      path: '/doctor/patient/$patientId'
+      fullPath: '/doctor/patient/$patientId'
+      preLoaderRoute: typeof DoctorPatientPatientIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/patient/activity/$activityId': {
       id: '/patient/activity/$activityId'
       path: '/patient/activity/$activityId'
@@ -433,6 +453,7 @@ const rootRouteChildren: RootRouteChildren = {
   PatientTwinRoute: PatientTwinRoute,
   PatientWelcomeRoute: PatientWelcomeRoute,
   DoctorIndexRoute: DoctorIndexRoute,
+  DoctorPatientPatientIdRoute: DoctorPatientPatientIdRoute,
   PatientActivityActivityIdRoute: PatientActivityActivityIdRoute,
   PatientAssessmentStepRoute: PatientAssessmentStepRoute,
   PatientAssessmentIndexRoute: PatientAssessmentIndexRoute,
