@@ -1,11 +1,14 @@
 import { useSyncExternalStore } from "react";
+import { getModule, type ModuleDef } from "./modules";
 
-export type Metrics = {
-  breathing: number;
-  pacing: number;
-  comfort: number;
-  fatigue: number;
-  confidence: number;
+export type IndicatorValues = Record<string, number>;
+
+export type AssessmentRecord = {
+  assessmentId: string;
+  indicatorKey: string;
+  score: number;
+  data: Record<string, number | string>;
+  at: number;
 };
 
 export type ActivityLog = {
@@ -14,21 +17,17 @@ export type ActivityLog = {
   category: string;
   at: number;
   xp: number;
+  score: number;
 };
 
 export type VitaState = {
   language: string;
   role: "patient" | "doctor" | "caregiver" | "admin" | null;
-  patient: { name: string; id: string; module: string } | null;
-  assessments: Partial<Record<string, number>>;
-  raw: {
-    cyclesCompleted: number;
-    cyclesMissed: number;
-    timingConsistency: number;
-    pacingCycles: number;
-    pacingConsistency: number;
-  };
-  metrics: Metrics | null;
+  patient: { name: string; id: string; moduleId: string } | null;
+  indicators: IndicatorValues;
+  results: Record<string, AssessmentRecord>;
+  baselineDone: boolean;
+  reassessments: number;
   twinCreated: boolean;
   activities: ActivityLog[];
   xp: number;
@@ -37,21 +36,16 @@ export type VitaState = {
   lastUpdate: { metric: string; from: number; to: number } | null;
 };
 
-const KEY = "vitaverse.state.v1";
+const KEY = "vitaverse.state.v2";
 
 const initial: VitaState = {
   language: "en",
   role: null,
   patient: null,
-  assessments: {},
-  raw: {
-    cyclesCompleted: 0,
-    cyclesMissed: 0,
-    timingConsistency: 0,
-    pacingCycles: 0,
-    pacingConsistency: 0,
-  },
-  metrics: null,
+  indicators: {},
+  results: {},
+  baselineDone: false,
+  reassessments: 0,
   twinCreated: false,
   activities: [],
   xp: 0,
@@ -114,98 +108,124 @@ export function getState() {
   return state;
 }
 
+export function clamp(n: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, n));
+}
+
 export const ACHIEVEMENTS = [
   { id: "first-step", name: "First Step", desc: "Complete your first activity." },
-  { id: "consistency", name: "Consistency", desc: "Complete daily goals." },
-  { id: "focus-builder", name: "Focus Builder", desc: "Complete 5 cognitive activities." },
-  { id: "breathing-streak", name: "Breathing Streak", desc: "Complete breathing activities consistently." },
+  { id: "consistency", name: "Consistency", desc: "Complete three activities." },
+  { id: "baseline", name: "Baseline Set", desc: "Finish all five assessments." },
+  { id: "focus-builder", name: "Focus Builder", desc: "Complete five cognitive or game activities." },
+  { id: "high-scorer", name: "High Scorer", desc: "Score 80% or more in an activity." },
+  { id: "reassessed", name: "Twin Updated", desc: "Complete a reassessment." },
 ];
 
 export function evaluateAchievements(s: VitaState): string[] {
   const unlocked = new Set(s.achievements);
   if (s.activities.length >= 1) unlocked.add("first-step");
   if (s.activities.length >= 3) unlocked.add("consistency");
-  if (s.activities.filter((a) => a.category === "Cognitive").length >= 5) unlocked.add("focus-builder");
-  if (s.activities.filter((a) => a.category === "Breathing").length >= 3) unlocked.add("breathing-streak");
+  if (s.baselineDone) unlocked.add("baseline");
+  if (s.activities.filter((a) => a.category === "Cognitive" || a.category === "Games").length >= 5)
+    unlocked.add("focus-builder");
+  if (s.activities.some((a) => a.score >= 80)) unlocked.add("high-scorer");
+  if (s.reassessments >= 1) unlocked.add("reassessed");
   return [...unlocked];
 }
 
-export function computeMetrics(s: VitaState): Metrics {
-  const r = s.raw;
-  const totalCycles = r.cyclesCompleted + r.cyclesMissed || 1;
-  const breathing = Math.round(
-    clamp((r.cyclesCompleted / totalCycles) * 65 + r.timingConsistency * 35, 0, 100),
-  );
-  const pacing = Math.round(clamp((r.pacingCycles / 5) * 55 + r.pacingConsistency * 45, 0, 100));
-  const comfort = Math.round(((s.assessments["comfort"] ?? 3) / 5) * 100);
-  const fatigue = Math.round(s.assessments["fatigue"] ?? 50);
-  const confidence = Math.round(s.assessments["confidence"] ?? 50);
-  return { breathing, pacing, comfort, fatigue, confidence };
+/** Records one completed assessment task and its derived recovery indicator. */
+export function saveAssessmentResult(record: Omit<AssessmentRecord, "at">) {
+  setState((s) => ({
+    results: { ...s.results, [record.assessmentId]: { ...record, at: Date.now() } },
+    indicators: { ...s.indicators, [record.indicatorKey]: Math.round(clamp(record.score, 0, 100)) },
+  }));
 }
 
-export function overallScore(m: Metrics): number {
-  return Math.round(
-    clamp(m.breathing * 0.25 + m.pacing * 0.2 + m.comfort * 0.2 + (100 - m.fatigue) * 0.15 + m.confidence * 0.2, 0, 100),
-  );
+function todayLabel() {
+  return new Date().toLocaleDateString(undefined, { weekday: "short" });
 }
 
-export function clamp(n: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, n));
+export function overallScore(mod: ModuleDef, indicators: IndicatorValues): number {
+  const values = mod.indicators.map((ind) => {
+    const raw = indicators[ind.key];
+    if (raw === undefined) return null;
+    return ind.invert ? 100 - raw : raw;
+  });
+  const present = values.filter((v): v is number => v !== null);
+  if (!present.length) return 0;
+  return Math.round(present.reduce((a, b) => a + b, 0) / present.length);
 }
 
 export function finalizeAssessment() {
   setState((s) => {
-    const metrics = computeMetrics(s);
-    const overall = overallScore(metrics);
-    const today = new Date().toLocaleDateString(undefined, { weekday: "short" });
-    return {
-      metrics,
+    const mod = getModule(s.patient?.moduleId);
+    const overall = overallScore(mod, s.indicators);
+    const isReassessment = s.baselineDone;
+    const next: VitaState = {
+      ...s,
+      baselineDone: true,
+      reassessments: isReassessment ? s.reassessments + 1 : s.reassessments,
       xp: s.xp + 20,
-      history: [...s.history.filter((h) => h.day !== today), { day: today, value: overall }],
+      history: [...s.history.filter((h) => h.day !== todayLabel()), { day: todayLabel(), value: overall }],
     };
+    return { ...next, achievements: evaluateAchievements(next) };
   });
 }
 
-const METRIC_BY_CATEGORY: Record<string, keyof Metrics> = {
-  Breathing: "breathing",
-  Cognitive: "pacing",
-  "Mental Wellness": "confidence",
-  Functional: "comfort",
-  Games: "pacing",
-};
-
-export function completeActivity(activity: { id: string; title: string; category: string }) {
+export function completeActivity(activity: {
+  id: string;
+  title: string;
+  category: string;
+  indicatorKey: string;
+  score: number;
+}) {
   setState((s) => {
-    const key = METRIC_BY_CATEGORY[activity.category] ?? "breathing";
-    const metrics: Metrics = s.metrics ?? computeMetrics(s);
-    const from = metrics[key];
-    const to = Math.round(clamp(from + 4, 0, 100));
-    const nextMetrics = { ...metrics, [key]: to } as Metrics;
+    const mod = getModule(s.patient?.moduleId);
+    const ind = mod.indicators.find((i) => i.key === activity.indicatorKey);
+    const from = s.indicators[activity.indicatorKey] ?? activity.score;
+    // A strong performance nudges the indicator toward that performance level.
+    const delta = Math.round((activity.score - 50) / 12);
+    const to = Math.round(clamp(ind?.invert ? from - delta : from + delta, 0, 100));
+    const indicators = { ...s.indicators, [activity.indicatorKey]: to };
+    const xpGain = 30 + Math.round(activity.score / 5);
     const activities = [
       ...s.activities,
-      { ...activity, at: Date.now(), xp: 30 },
+      {
+        id: activity.id,
+        title: activity.title,
+        category: activity.category,
+        at: Date.now(),
+        xp: xpGain,
+        score: Math.round(activity.score),
+      },
     ];
     const next: VitaState = {
       ...s,
-      metrics: nextMetrics,
+      indicators,
       activities,
-      xp: s.xp + 30,
-      lastUpdate: { metric: key, from, to },
+      xp: s.xp + xpGain,
+      lastUpdate: { metric: ind?.label ?? activity.indicatorKey, from, to },
     };
-    const today = new Date().toLocaleDateString(undefined, { weekday: "short" });
     return {
-      metrics: nextMetrics,
+      indicators,
       activities,
       xp: next.xp,
       lastUpdate: next.lastUpdate,
       achievements: evaluateAchievements(next),
-      history: [...s.history.filter((h) => h.day !== today), { day: today, value: overallScore(nextMetrics) }],
+      history: [
+        ...s.history.filter((h) => h.day !== todayLabel()),
+        { day: todayLabel(), value: overallScore(mod, indicators) },
+      ],
     };
   });
 }
 
+export function lastActivityXp(s: VitaState) {
+  return s.activities[s.activities.length - 1]?.xp ?? 30;
+}
+
 export function streakDays(s: VitaState) {
-  return Math.min(6 + Math.floor(s.activities.length / 3), 30);
+  return Math.min(1 + Math.floor(s.activities.length / 2), 30);
 }
 
 export function todaysProgress(s: VitaState) {
@@ -215,20 +235,15 @@ export function todaysProgress(s: VitaState) {
 }
 
 export function insightFor(s: VitaState): string {
-  const m = s.metrics;
-  if (!m) return "Complete your assessment to unlock personalised recovery insights.";
-  const entries: [string, number][] = [
-    ["breathing control", m.breathing],
-    ["pacing", m.pacing],
-    ["activity comfort", m.comfort],
-    ["recovery confidence", m.confidence],
-  ];
-  entries.sort((a, b) => a[1] - b[1]);
+  const mod = getModule(s.patient?.moduleId);
+  const entries = mod.indicators
+    .filter((i) => s.indicators[i.key] !== undefined)
+    .map((i) => ({ label: i.label, value: i.invert ? 100 - s.indicators[i.key]! : s.indicators[i.key]! }));
+  if (!entries.length) return `Complete your ${mod.name} assessment to unlock personalised recovery insights.`;
+  entries.sort((a, b) => a.value - b.value);
   const weakest = entries[0]!;
   const strongest = entries[entries.length - 1]!;
-  if (m.fatigue > 65)
-    return `Your fatigue reading is high today — shorter sessions with longer rest are recommended before focusing on ${weakest[0]}.`;
-  return `Your ${strongest[0]} is your strongest signal at ${strongest[1]}%. Today's plan focuses on ${weakest[0]}, currently ${weakest[1]}%.`;
+  return `${strongest.label} is your strongest signal at ${strongest.value}%. Today's ${mod.name} plan focuses on ${weakest.label.toLowerCase()}, currently ${weakest.value}%.`;
 }
 
 export function resetSession() {
