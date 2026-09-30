@@ -965,6 +965,7 @@ function MatchPairsTask({
       const t = setTimeout(() => setFlipped([]), 750);
       return () => clearTimeout(t);
     }
+    return undefined;
   }, [flipped, deck]);
 
   useEffect(() => {

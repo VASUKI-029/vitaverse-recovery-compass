@@ -1,7 +1,8 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Card, Eyebrow, GhostLink, Page, PrimaryButton, Sub, Title } from "@/components/vitaverse/Shell";
-import { setState, type VitaState } from "@/lib/vitaverse-store";
+import { findPatient } from "@/lib/patients";
+import { getState, setState, type VitaState } from "@/lib/vitaverse-store";
 
 export type LoginConfig = {
   title: string;
@@ -12,6 +13,10 @@ export type LoginConfig = {
   next: string;
 };
 
+function getPrev() {
+  return getState().patient?.id ?? null;
+}
+
 export function LoginScreen({ config }: { config: LoginConfig }) {
   const navigate = useNavigate();
   const [a, setA] = useState("");
@@ -19,6 +24,25 @@ export function LoginScreen({ config }: { config: LoginConfig }) {
   const [error, setError] = useState("");
 
   const submit = () => {
+    if (config.role === "patient") {
+      const p = findPatient(a, b);
+      if (!p) {
+        setError("No patient found with that name and ID.");
+        return;
+      }
+      setError("");
+      const prev = getPrev();
+      // A different patient starts a fresh recovery journey.
+      if (prev !== p.id) {
+        setState({
+          indicators: {}, results: {}, baselineDone: false, reassessments: 0, twinCreated: false,
+          activities: [], xp: 0, achievements: [], history: [], lastUpdate: null,
+        });
+      }
+      setState({ role: "patient", patient: { name: p.name, id: p.id, moduleId: p.moduleId } });
+      navigate({ to: "/patient/welcome" });
+      return;
+    }
     const ok =
       a.trim().toLowerCase() === config.fields[0].value.toLowerCase() &&
       b.trim().toLowerCase() === config.fields[1].value.toLowerCase();
@@ -28,9 +52,6 @@ export function LoginScreen({ config }: { config: LoginConfig }) {
     }
     setError("");
     setState({ role: config.role });
-    if (config.role === "patient") {
-      setState({ patient: { name: "Alex", id: "VT1001", module: "PulmoVerse" } });
-    }
     navigate({ to: config.next });
   };
 
