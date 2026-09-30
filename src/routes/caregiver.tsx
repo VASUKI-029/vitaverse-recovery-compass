@@ -1,6 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Card, Eyebrow, Meter, Page, Sub, Title } from "@/components/vitaverse/Shell";
-import { computeMetrics, insightFor, overallScore, resetSession, streakDays, todaysProgress, useVita } from "@/lib/vitaverse-store";
+import { IndicatorMeters } from "@/components/vitaverse/Indicators";
+import { getModule } from "@/lib/modules";
+import { Card, Eyebrow, Page, Sub, Title } from "@/components/vitaverse/Shell";
+import { insightFor, overallScore, resetSession, streakDays, todaysProgress, useVita } from "@/lib/vitaverse-store";
 
 export const Route = createFileRoute("/caregiver")({
   head: () => ({
@@ -17,8 +19,8 @@ export const Route = createFileRoute("/caregiver")({
 function CaregiverDashboard() {
   const state = useVita();
   const navigate = useNavigate();
-  const m = state.metrics ?? computeMetrics(state);
-  const overall = overallScore(m);
+  const mod = getModule(state.patient?.moduleId);
+  const overall = overallScore(mod, state.indicators);
   const progress = todaysProgress(state);
 
   return (
@@ -27,7 +29,7 @@ function CaregiverDashboard() {
         <div>
           <Eyebrow>CG001 · Caregiver</Eyebrow>
           <Title>Caregiver Dashboard</Title>
-          <Sub>Supporting {state.patient?.name ?? "Alex"} through PulmoVerse recovery.</Sub>
+          <Sub>Supporting {state.patient?.name ?? "Alex"} through {mod.name} recovery.</Sub>
         </div>
         <button
           onClick={() => {
@@ -54,9 +56,7 @@ function CaregiverDashboard() {
       </div>
 
       <Card className="mt-6 space-y-6">
-        <Meter label="Breathing Control" value={m.breathing} />
-        <Meter label="Activity Comfort" value={m.comfort} />
-        <Meter label="Recovery Confidence" value={m.confidence} />
+        <IndicatorMeters mod={mod} values={state.indicators} />
       </Card>
 
       <p className="mt-12 text-[0.6rem] uppercase tracking-[0.28em] text-teal">Support Note</p>

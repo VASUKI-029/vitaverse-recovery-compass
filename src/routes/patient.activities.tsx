@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { BottomNav } from "@/components/vitaverse/BottomNav";
 import { Card, Eyebrow, Page, Sub, Title } from "@/components/vitaverse/Shell";
-import { ACTIVITIES, CATEGORIES } from "@/lib/activities";
+import { getModule, moduleCategories } from "@/lib/modules";
 import { useVita } from "@/lib/vitaverse-store";
 
 export const Route = createFileRoute("/patient/activities")({
@@ -18,21 +18,22 @@ export const Route = createFileRoute("/patient/activities")({
 
 function Activities() {
   const state = useVita();
+  const mod = getModule(state.patient?.moduleId);
   const done = new Set(state.activities.map((a) => a.id));
 
   return (
     <Page max="max-w-2xl" className="pb-28">
       <div className="vv-enter">
-        <Eyebrow>PulmoVerse</Eyebrow>
+        <Eyebrow>{mod.name}</Eyebrow>
         <Title>Activities</Title>
         <Sub>Choose an activity to begin.</Sub>
       </div>
 
-      {CATEGORIES.map((cat) => (
+      {moduleCategories(mod).map((cat) => (
         <section key={cat} className="mt-10">
           <p className="text-[0.6rem] uppercase tracking-[0.28em] text-teal">{cat}</p>
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
-            {ACTIVITIES.filter((a) => a.category === cat).map((a) => (
+            {mod.activities.filter((a) => a.category === cat).map((a) => (
               <Link key={a.id} to="/patient/activity/$activityId" params={{ activityId: a.id }}>
                 <Card interactive className="flex h-full items-center justify-between p-5">
                   <div>

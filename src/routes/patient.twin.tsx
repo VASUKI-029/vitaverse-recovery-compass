@@ -1,8 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { BottomNav } from "@/components/vitaverse/BottomNav";
+import { IndicatorMeters } from "@/components/vitaverse/Indicators";
+import { getModule } from "@/lib/modules";
 import { Card, Eyebrow, Meter, Page, PrimaryButton, Ring, Sub, Title } from "@/components/vitaverse/Shell";
-import { computeMetrics, overallScore, setState, useVita } from "@/lib/vitaverse-store";
+import { overallScore, setState, useVita } from "@/lib/vitaverse-store";
 
 export const Route = createFileRoute("/patient/twin")({
   head: () => ({
@@ -19,8 +21,8 @@ export const Route = createFileRoute("/patient/twin")({
 function DigitalTwin() {
   const state = useVita();
   const navigate = useNavigate();
-  const m = state.metrics ?? computeMetrics(state);
-  const overall = overallScore(m);
+  const mod = getModule(state.patient?.moduleId);
+  const overall = overallScore(mod, state.indicators);
   const [generating, setGenerating] = useState(!state.twinCreated);
 
   useEffect(() => {
@@ -36,7 +38,7 @@ function DigitalTwin() {
     <Page max="max-w-3xl" className="pb-28">
       <div className="vv-enter text-center">
         <Eyebrow>
-          {state.patient?.name ?? "Alex"} · {state.patient?.module ?? "PulmoVerse"}
+          {state.patient?.name ?? "Alex"} · {mod.name}
         </Eyebrow>
         <Title>{generating ? "Generating Digital Twin" : "Digital Twin Created"}</Title>
         <Sub>Your recovery profile has been created from your assessment responses.</Sub>
@@ -70,13 +72,11 @@ function DigitalTwin() {
 
       <div className="mt-8 grid gap-5 sm:grid-cols-2">
         <Card className="space-y-6">
-          <Meter label="Breathing" value={m.breathing} />
-          <Meter label="Pacing" value={m.pacing} />
-          <Meter label="Activity Comfort" value={m.comfort} />
+          <IndicatorMeters mod={mod} values={state.indicators} />
         </Card>
         <Card className="space-y-6">
-          <Meter label="Fatigue" value={m.fatigue} />
-          <Meter label="Recovery Confidence" value={m.confidence} />
+          <Meter label="Assessments Completed" value={(Object.keys(state.results).length / mod.assessments.length) * 100} />
+          <Meter label="Reassessments" value={Math.min(100, state.reassessments * 20)} suffix="" />
           <Meter label="Overall Recovery Indicator" value={overall} />
         </Card>
       </div>

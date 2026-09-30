@@ -1,6 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Card, Eyebrow, Meter, Page, Ring, Sub, Title } from "@/components/vitaverse/Shell";
-import { computeMetrics, insightFor, overallScore, useVita } from "@/lib/vitaverse-store";
+import { IndicatorMeters } from "@/components/vitaverse/Indicators";
+import { getModule } from "@/lib/modules";
+import { patientById } from "@/lib/patients";
+import { Card, Eyebrow, Page, Ring, Sub, Title } from "@/components/vitaverse/Shell";
+import { insightFor, overallScore, useVita } from "@/lib/vitaverse-store";
 
 export const Route = createFileRoute("/doctor/patient/$patientId")({
   head: () => ({
@@ -18,8 +21,12 @@ function PatientDetail() {
   const { patientId } = Route.useParams();
   const navigate = useNavigate();
   const state = useVita();
-  const m = state.metrics ?? computeMetrics(state);
-  const overall = overallScore(m);
+  const demo = patientById(patientId);
+  const isActive = state.patient?.id === demo?.id;
+  const mod = getModule(demo?.moduleId ?? state.patient?.moduleId);
+  const values = isActive ? state.indicators : {};
+  const overall = overallScore(mod, values);
+  const activities = isActive ? state.activities : [];
 
   return (
     <Page max="max-w-4xl">
@@ -31,8 +38,8 @@ function PatientDetail() {
       </button>
 
       <div className="vv-enter mt-8">
-        <Eyebrow>{patientId} · PulmoVerse</Eyebrow>
-        <Title>{state.patient?.name ?? "Alex"}</Title>
+        <Eyebrow>{patientId} · {mod.name}</Eyebrow>
+        <Title>{demo?.name ?? patientId}</Title>
         <Sub>Adaptive recovery profile generated from assessment and activity data.</Sub>
       </div>
 
@@ -41,25 +48,22 @@ function PatientDetail() {
           <Ring value={overall} />
         </div>
         <Card className="space-y-6">
-          <Meter label="Breathing Control" value={m.breathing} />
-          <Meter label="Activity Comfort" value={m.comfort} />
-          <Meter label="Fatigue Load" value={m.fatigue} />
-          <Meter label="Recovery Confidence" value={m.confidence} />
+          <IndicatorMeters mod={mod} values={values} />
         </Card>
       </div>
 
       <p className="mt-12 text-[0.6rem] uppercase tracking-[0.28em] text-teal">Clinical Insight</p>
       <Card className="mt-3">
-        <p className="text-sm font-light leading-relaxed text-foreground">{insightFor(state)}</p>
+        <p className="text-sm font-light leading-relaxed text-foreground">{isActive ? insightFor(state) : "No assessment data recorded for this patient yet."}</p>
       </Card>
 
       <p className="mt-10 text-[0.6rem] uppercase tracking-[0.28em] text-teal">Activity Log</p>
       <Card className="mt-3">
-        {state.activities.length === 0 ? (
+        {activities.length === 0 ? (
           <p className="text-sm text-muted-foreground">No activities recorded yet.</p>
         ) : (
           <ul className="space-y-3">
-            {state.activities
+            {activities
               .slice()
               .reverse()
               .map((a) => (

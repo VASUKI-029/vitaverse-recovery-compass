@@ -1,6 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Card, Eyebrow, Meter, Page, PrimaryButton, Ring, Sub, Title } from "@/components/vitaverse/Shell";
-import { computeMetrics, overallScore, useVita } from "@/lib/vitaverse-store";
+import { IndicatorMeters } from "@/components/vitaverse/Indicators";
+import { getModule } from "@/lib/modules";
+import { Card, Eyebrow, Page, PrimaryButton, Ring, Sub, Title } from "@/components/vitaverse/Shell";
+import { overallScore, useVita } from "@/lib/vitaverse-store";
 
 export const Route = createFileRoute("/patient/summary")({
   head: () => ({
@@ -17,13 +19,13 @@ export const Route = createFileRoute("/patient/summary")({
 function Summary() {
   const state = useVita();
   const navigate = useNavigate();
-  const m = state.metrics ?? computeMetrics(state);
-  const overall = overallScore(m);
+  const mod = getModule(state.patient?.moduleId);
+  const overall = overallScore(mod, state.indicators);
 
   return (
     <Page max="max-w-2xl">
       <div className="vv-enter text-center">
-        <Eyebrow>Assessment Summary</Eyebrow>
+        <Eyebrow>{mod.name} · Assessment Summary</Eyebrow>
         <Title>Your Baseline</Title>
         <Sub>Built entirely from your responses.</Sub>
       </div>
@@ -33,11 +35,7 @@ function Summary() {
       </div>
 
       <Card className="mt-10 space-y-6 vv-enter">
-        <Meter label="Breathing" value={m.breathing} />
-        <Meter label="Pacing" value={m.pacing} />
-        <Meter label="Activity Comfort" value={m.comfort} />
-        <Meter label="Fatigue" value={m.fatigue} />
-        <Meter label="Recovery Confidence" value={m.confidence} />
+        <IndicatorMeters mod={mod} values={state.indicators} />
       </Card>
 
       <div className="mt-10 flex justify-center pb-6">
