@@ -1,8 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { BottomNav } from "@/components/vitaverse/BottomNav";
 import { Card, Eyebrow, Page, PrimaryButton, Title } from "@/components/vitaverse/Shell";
-import { ACTIVITIES } from "@/lib/activities";
-import { computeMetrics, insightFor, overallScore, streakDays, todaysProgress, useVita } from "@/lib/vitaverse-store";
+import { getModule } from "@/lib/modules";
+import { insightFor, overallScore, streakDays, todaysProgress, useVita } from "@/lib/vitaverse-store";
 
 export const Route = createFileRoute("/patient/home")({
   head: () => ({
@@ -19,17 +19,17 @@ export const Route = createFileRoute("/patient/home")({
 function PatientHome() {
   const state = useVita();
   const navigate = useNavigate();
-  const m = state.metrics ?? computeMetrics(state);
-  const overall = overallScore(m);
+  const mod = getModule(state.patient?.moduleId);
+  const overall = overallScore(mod, state.indicators);
   const progress = todaysProgress(state);
   const doneIds = new Set(state.activities.map((a) => a.id));
-  const next = ACTIVITIES.find((a) => !doneIds.has(a.id)) ?? ACTIVITIES[0]!;
+  const next = mod.activities.find((a) => !doneIds.has(a.id)) ?? mod.activities[0]!;
 
   return (
     <Page max="max-w-lg" className="pb-28">
       <div className="vv-enter flex items-start justify-between">
         <div>
-          <Eyebrow>PulmoVerse</Eyebrow>
+          <Eyebrow>{mod.name}</Eyebrow>
           <Title className="mt-2 text-3xl">Good morning, {state.patient?.name ?? "Alex"}</Title>
         </div>
         <span className="vv-display mt-2 rounded-full border border-border px-3 py-1 text-xs text-teal">

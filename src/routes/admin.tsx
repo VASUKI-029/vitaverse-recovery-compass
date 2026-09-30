@@ -1,7 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Card, Eyebrow, Meter, Page, Sub, Title } from "@/components/vitaverse/Shell";
 import { CATEGORIES } from "@/lib/activities";
-import { computeMetrics, overallScore, resetSession, useVita } from "@/lib/vitaverse-store";
+import { getModule, MODULES } from "@/lib/modules";
+import { DEMO_PATIENTS } from "@/lib/patients";
+import { overallScore, resetSession, useVita } from "@/lib/vitaverse-store";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -18,7 +20,7 @@ export const Route = createFileRoute("/admin")({
 function AdminDashboard() {
   const state = useVita();
   const navigate = useNavigate();
-  const m = state.metrics ?? computeMetrics(state);
+  const mod = getModule(state.patient?.moduleId);
   const engagement = Math.min(100, state.activities.length * 12);
 
   return (
@@ -42,10 +44,10 @@ function AdminDashboard() {
 
       <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[
-          { label: "Patients", value: "1" },
+          { label: "Patients", value: String(DEMO_PATIENTS.length) },
           { label: "Clinicians", value: "1" },
           { label: "Caregivers", value: "1" },
-          { label: "Active Modules", value: "1" },
+          { label: "Active Modules", value: String(MODULES.length) },
         ].map((s) => (
           <Card key={s.label} className="vv-enter p-5">
             <p className="vv-display text-3xl text-foreground">{s.value}</p>
@@ -58,19 +60,17 @@ function AdminDashboard() {
         <Card className="space-y-6">
           <p className="text-[0.6rem] uppercase tracking-[0.26em] text-teal">Engagement</p>
           <Meter label="Platform Engagement" value={engagement} />
-          <Meter label="Average Recovery Index" value={overallScore(m)} />
+          <Meter label="Average Recovery Index" value={overallScore(mod, state.indicators)} />
         </Card>
         <Card>
           <p className="text-[0.6rem] uppercase tracking-[0.26em] text-teal">Modules</p>
           <ul className="mt-4 space-y-3 text-sm">
-            <li className="flex items-center justify-between">
-              <span className="text-foreground">PulmoVerse</span>
-              <span className="text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground">Live</span>
-            </li>
-            {["CardioVerse", "NeuroVerse", "OrthoVerse"].map((mod) => (
-              <li key={mod} className="flex items-center justify-between opacity-60">
-                <span className="text-foreground">{mod}</span>
-                <span className="text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground">Planned</span>
+            {MODULES.map((mm) => (
+              <li key={mm.id} className="flex items-center justify-between">
+                <span className="text-foreground">{mm.name}</span>
+                <span className="text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground">
+                  {DEMO_PATIENTS.filter((p) => p.moduleId === mm.id).map((p) => p.name).join(", ")} · Live
+                </span>
               </li>
             ))}
           </ul>

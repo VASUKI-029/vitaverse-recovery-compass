@@ -1,7 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Card, Page, PrimaryButton } from "@/components/vitaverse/Shell";
-import { findActivity } from "@/lib/activities";
+import { TaskRunner, type TaskResult } from "@/components/vitaverse/tasks";
+import { findModuleActivity, getModule } from "@/lib/modules";
 import { ACHIEVEMENTS, completeActivity, useVita } from "@/lib/vitaverse-store";
 
 export const Route = createFileRoute("/patient/activity/$activityId")({
@@ -20,8 +21,10 @@ function ActivityScreen() {
   const { activityId } = Route.useParams();
   const navigate = useNavigate();
   const state = useVita();
-  const activity = findActivity(activityId);
-  const [progress, setProgress] = useState(0);
+  const mod = getModule(state.patient?.moduleId);
+  const activity = findModuleActivity(mod, activityId);
+  const [result, setResult] = useState<TaskResult | null>(null);
+  const [earned, setEarned] = useState(0);
   const [done, setDone] = useState(false);
   const [xpBurst, setXpBurst] = useState(false);
   const [unlocked, setUnlocked] = useState<string | null>(null);
@@ -51,8 +54,15 @@ function ActivityScreen() {
   }
 
   const finish = () => {
-    if (done) return;
-    completeActivity({ id: activity.id, title: activity.title, category: activity.category });
+    if (done || !result) return;
+    completeActivity({
+      id: activity.id,
+      title: activity.title,
+      category: activity.category,
+      indicatorKey: activity.indicatorKey,
+      score: result.score,
+    });
+    setEarned(30 + Math.round(result.score / 5));
     setDone(true);
   };
 
@@ -72,37 +82,18 @@ function ActivityScreen() {
         <h1 className="vv-display text-[clamp(1.6rem,5vw,2.4rem)] font-light text-foreground">{activity.title}</h1>
         <p className="mt-3 text-sm font-light text-muted-foreground">{activity.instruction}</p>
 
-        <div className="relative mt-12 flex h-60 w-60 items-center justify-center">
-          <span
-            className="absolute inset-0 rounded-full"
-            style={{
-              background: "radial-gradient(circle, color-mix(in oklab, var(--teal) 16%, transparent), transparent 68%)",
-              transform: `scale(${0.85 + progress / 200})`,
-              transition: "transform 900ms cubic-bezier(0.37,0,0.63,1)",
-            }}
-          />
-          <button
-            onClick={() => setProgress((p) => Math.min(100, p + 25))}
-            disabled={done}
-            className="vv-display relative h-40 w-40 rounded-full border border-rose/50 text-lg uppercase tracking-[0.24em] text-foreground transition-transform duration-300 active:scale-95 disabled:opacity-60"
-          >
-            {done ? "Complete" : progress >= 100 ? "Ready" : "Tap"}
-          </button>
+        <div className="relative mt-10 w-full">
+          {!done ? (
+            <TaskRunner key={activity.id} spec={activity.task} accessible={mod.accessible} onResult={setResult} />
+          ) : null}
           {xpBurst ? (
             <span
-              className="vv-display absolute -top-4 text-2xl text-rose"
+              className="vv-display absolute left-1/2 top-0 -translate-x-1/2 text-2xl text-rose"
               style={{ animation: "vv-pop 1200ms ease-out both" }}
             >
-              +30 XP
+              +{earned} XP
             </span>
           ) : null}
-        </div>
-
-        <div className="mt-10 h-1.5 w-full max-w-xs overflow-hidden rounded-full bg-muted">
-          <div
-            className="h-full rounded-full transition-[width] duration-500"
-            style={{ width: `${progress}%`, background: "linear-gradient(90deg,var(--teal),var(--rose))" }}
-          />
         </div>
 
         {done ? (
@@ -132,7 +123,7 @@ function ActivityScreen() {
               </button>
             </>
           ) : (
-            <PrimaryButton disabled={progress < 100} onClick={finish}>
+            <PrimaryButton disabled={!result} onClick={finish}>
               Complete
             </PrimaryButton>
           )}

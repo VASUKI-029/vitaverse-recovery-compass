@@ -1,6 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { getModule } from "@/lib/modules";
+import { DEMO_PATIENTS } from "@/lib/patients";
 import { Card, Eyebrow, Meter, Page, Sub, Title } from "@/components/vitaverse/Shell";
-import { computeMetrics, overallScore, resetSession, useVita } from "@/lib/vitaverse-store";
+import { overallScore, resetSession, useVita } from "@/lib/vitaverse-store";
 
 export const Route = createFileRoute("/doctor/")({
   head: () => ({
@@ -17,10 +19,14 @@ export const Route = createFileRoute("/doctor/")({
 function DoctorDashboard() {
   const state = useVita();
   const navigate = useNavigate();
-  const m = state.metrics ?? computeMetrics(state);
-  const overall = overallScore(m);
-  const assessed = Boolean(state.metrics);
-  const attention = overall < 60 || m.fatigue > 65 ? 1 : 0;
+  const rows = DEMO_PATIENTS.map((p) => {
+    const mod = getModule(p.moduleId);
+    const active = state.patient?.id === p.id;
+    const overall = active ? overallScore(mod, state.indicators) : 0;
+    return { p, mod, active, overall, assessed: active && state.baselineDone };
+  });
+  const assessedCount = rows.filter((r) => r.assessed).length;
+  const attention = rows.filter((r) => r.assessed && r.overall < 60).length;
 
   return (
     <Page max="max-w-5xl">
@@ -43,8 +49,8 @@ function DoctorDashboard() {
 
       <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[
-          { label: "Total Patients", value: "1" },
-          { label: "Active Patients", value: assessed ? "1" : "0" },
+          { label: "Total Patients", value: String(rows.length) },
+          { label: "Active Patients", value: String(assessedCount) },
           { label: "Requiring Attention", value: String(attention) },
           { label: "Recent Activity", value: String(state.activities.length) },
         ].map((s) => (
@@ -56,19 +62,23 @@ function DoctorDashboard() {
       </div>
 
       <p className="mt-12 text-[0.6rem] uppercase tracking-[0.28em] text-teal">Patients</p>
-      <Link to="/doctor/patient/$patientId" params={{ patientId: "VT1001" }} className="mt-3 block">
-        <Card interactive className="flex flex-wrap items-center justify-between gap-6">
-          <div>
-            <h2 className="vv-display text-2xl font-light text-foreground">{state.patient?.name ?? "Alex"}</h2>
-            <p className="mt-1 text-[0.6rem] uppercase tracking-[0.22em] text-muted-foreground">
-              VT1001 · PulmoVerse
-            </p>
-          </div>
-          <div className="w-full max-w-xs">
-            <Meter label="Recovery Indicator" value={overall} />
-          </div>
-        </Card>
-      </Link>
+      <div className="mt-3 space-y-3">
+        {rows.map(({ p, mod, overall }) => (
+          <Link key={p.id} to="/doctor/patient/$patientId" params={{ patientId: p.id }} className="block">
+            <Card interactive className="flex flex-wrap items-center justify-between gap-6">
+              <div>
+                <h2 className="vv-display text-2xl font-light text-foreground">{p.name}</h2>
+                <p className="mt-1 text-[0.6rem] uppercase tracking-[0.22em] text-muted-foreground">
+                  {p.id} · {mod.name} · {p.ward}
+                </p>
+              </div>
+              <div className="w-full max-w-xs">
+                <Meter label="Recovery Indicator" value={overall} />
+              </div>
+            </Card>
+          </Link>
+        ))}
+      </div>
 
       <p className="mt-12 text-[0.6rem] uppercase tracking-[0.28em] text-teal">Recent Recovery Activity</p>
       <Card className="mt-3">
