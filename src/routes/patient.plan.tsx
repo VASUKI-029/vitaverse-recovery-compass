@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { BottomNav } from "@/components/vitaverse/BottomNav";
 import { Card, Eyebrow, Page, PrimaryButton, Sub, Title } from "@/components/vitaverse/Shell";
-import { ACTIVITIES } from "@/lib/activities";
+import { getModule } from "@/lib/modules";
+import { useVita } from "@/lib/vitaverse-store";
 
 export const Route = createFileRoute("/patient/plan")({
   head: () => ({
@@ -15,15 +16,22 @@ export const Route = createFileRoute("/patient/plan")({
   component: RecoveryPlan,
 });
 
-const PLAN_IDS = ["guided-breathing", "relaxation", "focus-challenge", "daily-goal"];
 
 function RecoveryPlan() {
-  const items = PLAN_IDS.map((id) => ACTIVITIES.find((a) => a.id === id)!).filter(Boolean);
+  const state = useVita();
+  const mod = getModule(state.patient?.moduleId);
+  // Prioritise activities that train the weakest recorded indicators.
+  const strength = (key: string) => {
+    const ind = mod.indicators.find((i) => i.key === key);
+    const v = state.indicators[key] ?? 50;
+    return ind?.invert ? 100 - v : v;
+  };
+  const items = [...mod.activities].sort((a, b) => strength(a.indicatorKey) - strength(b.indicatorKey)).slice(0, 4);
 
   return (
     <Page max="max-w-2xl" className="pb-28">
       <div className="vv-enter">
-        <Eyebrow>PulmoVerse</Eyebrow>
+        <Eyebrow>{mod.name}</Eyebrow>
         <Title>Your Recovery Plan</Title>
         <Sub>Personalized activities based on your current recovery profile.</Sub>
       </div>

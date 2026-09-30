@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { getModule } from "@/lib/modules";
 import { BottomNav } from "@/components/vitaverse/BottomNav";
 import { Card, Eyebrow, Page, PrimaryButton, Sub, Title } from "@/components/vitaverse/Shell";
 import { ACHIEVEMENTS, resetSession, streakDays, useVita } from "@/lib/vitaverse-store";
@@ -24,7 +25,7 @@ function Profile() {
       <div className="vv-enter">
         <Eyebrow>{state.patient?.id ?? "VT1001"}</Eyebrow>
         <Title>{state.patient?.name ?? "Alex"}</Title>
-        <Sub>PulmoVerse · {state.xp} XP · {streakDays(state)} day streak</Sub>
+        <Sub>{getModule(state.patient?.moduleId).name} · {state.xp} XP · {streakDays(state)} day streak</Sub>
       </div>
 
       <p className="mt-10 text-[0.6rem] uppercase tracking-[0.28em] text-muted-foreground">Achievements</p>
