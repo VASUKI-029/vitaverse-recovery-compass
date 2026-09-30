@@ -4,7 +4,7 @@ import { clamp } from "@/lib/vitaverse-store";
 
 export type TaskResult = { score: number; data: Record<string, number | string> };
 
-type TaskProps = { spec: TaskSpec; accessible?: boolean; onResult: (r: TaskResult) => void };
+type TaskProps = { spec: TaskSpec; accessible?: boolean | undefined; onResult: (r: TaskResult) => void };
 
 export function TaskRunner({ spec, accessible, onResult }: TaskProps) {
   switch (spec.type) {
@@ -71,7 +71,7 @@ function MemoryRecall({
   onResult,
 }: {
   spec: Extract<TaskSpec, { type: "memory-recall" }>;
-  accessible?: boolean;
+  accessible?: boolean | undefined;
   onResult: (r: TaskResult) => void;
 }) {
   const [phase, setPhase] = useState<"study" | "recall" | "done">("study");
@@ -177,7 +177,7 @@ function SelectiveAttention({
   onResult,
 }: {
   spec: Extract<TaskSpec, { type: "selective-attention" }>;
-  accessible?: boolean;
+  accessible?: boolean | undefined;
   onResult: (r: TaskResult) => void;
 }) {
   const [running, setRunning] = useState(false);
@@ -311,7 +311,7 @@ function ReactionTask({
   onResult,
 }: {
   spec: Extract<TaskSpec, { type: "reaction" }>;
-  accessible?: boolean;
+  accessible?: boolean | undefined;
   onResult: (r: TaskResult) => void;
 }) {
   const [round, setRound] = useState(0);
@@ -399,7 +399,7 @@ function SequenceTask({
   onResult,
 }: {
   spec: Extract<TaskSpec, { type: "sequence" }>;
-  accessible?: boolean;
+  accessible?: boolean | undefined;
   onResult: (r: TaskResult) => void;
 }) {
   const palette = spec.palette;
@@ -656,7 +656,7 @@ function ChoiceTask({
   onResult,
 }: {
   spec: Extract<TaskSpec, { type: "choice" }>;
-  accessible?: boolean;
+  accessible?: boolean | undefined;
   onResult: (r: TaskResult) => void;
 }) {
   const [selected, setSelected] = useState<number | null>(null);
@@ -939,7 +939,7 @@ function MatchPairsTask({
   onResult,
 }: {
   spec: Extract<TaskSpec, { type: "match-pairs" }>;
-  accessible?: boolean;
+  accessible?: boolean | undefined;
   onResult: (r: TaskResult) => void;
 }) {
   const deck = useMemo(() => {
@@ -1018,7 +1018,7 @@ function ChecklistTask({
   onResult,
 }: {
   spec: Extract<TaskSpec, { type: "checklist" }>;
-  accessible?: boolean;
+  accessible?: boolean | undefined;
   onResult: (r: TaskResult) => void;
 }) {
   const [picked, setPicked] = useState<string[]>([]);
