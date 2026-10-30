@@ -1,13 +1,12 @@
 import { Meter } from "@/components/vitaverse/Shell";
-import type { ModuleDef } from "@/lib/modules";
-import type { IndicatorValues } from "@/lib/vitaverse-store";
+import { DIMENSIONS, type DimensionValues } from "@/lib/dimensions";
 
-/** Renders the module's own recovery indicators from recorded values. */
-export function IndicatorMeters({ mod, values }: { mod: ModuleDef; values: IndicatorValues }) {
+/** Renders the six VITAVERSE Recovery Indicators (prototype indicators, not medical diagnoses). */
+export function DimensionMeters({ values }: { values: Partial<DimensionValues> }) {
   return (
     <>
-      {mod.indicators.map((ind) => (
-        <Meter key={ind.key} label={ind.label} value={values[ind.key] ?? 0} />
+      {DIMENSIONS.map((d) => (
+        <Meter key={d.key} label={d.label} value={values[d.key] ?? 0} />
       ))}
     </>
   );
