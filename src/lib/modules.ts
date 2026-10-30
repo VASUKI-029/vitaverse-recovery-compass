@@ -1351,3 +1351,15 @@ export function moduleCategories(m: ModuleDef): string[] {
 export function findModuleActivity(m: ModuleDef, id: string) {
   return m.activities.find((a) => a.id === id);
 }
+
+/** Universal recovery dimensions an assessment feeds (explicit or derived from its indicator). */
+export function dimensionsForAssessment(a: ModuleAssessment): Dimension[] {
+  return a.dimensions ?? dimensionsForIndicator(a.indicator.key);
+}
+
+/** True when a higher raw task score means a worse state (fatigue, stress, loneliness…). */
+export function assessmentInverts(a: ModuleAssessment): boolean {
+  if (a.indicator.invert) return true;
+  const task = a.task as { invert?: boolean };
+  return task.invert === true;
+}
