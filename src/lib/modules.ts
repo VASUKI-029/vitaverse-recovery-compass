@@ -1,3 +1,5 @@
+import { dimensionsForIndicator, type Dimension } from "./dimensions";
+
 export type TaskSpec =
   | { type: "memory-recall"; items: string[]; distractors: string[]; showMs: number }
   | { type: "selective-attention"; targetLabel: string; seconds: number }
@@ -21,6 +23,8 @@ export type ModuleAssessment = {
   title: string;
   instruction: string;
   indicator: Indicator;
+  /** Universal VITAVERSE recovery dimensions this assessment feeds. */
+  dimensions?: Dimension[];
   task: TaskSpec;
 };
 
@@ -106,6 +110,53 @@ const neuro: ModuleDef = {
       instruction: "How are you today?",
       indicator: { key: "wellbeing", label: "Emotional Wellbeing" },
       task: { type: "checkin", prompt: "How are you feeling right now?", fields: ["Energy", "Motivation", "Focus"] },
+    },
+    {
+      id: "pattern-recognition",
+      title: "Pattern Recognition",
+      instruction: "Match the identical patterns.",
+      indicator: { key: "pattern", label: "Pattern Recognition" },
+      task: { type: "match-pairs", pairs: 5, symbols: ["🧩", "🔶", "🌀", "⭐", "🔺"] },
+    },
+    {
+      id: "coordination",
+      title: "Coordination",
+      instruction: "Keep a steady tapping rhythm.",
+      indicator: { key: "coordination", label: "Coordination" },
+      task: { type: "timed-taps", prompt: "Tap in time with the pulse.", seconds: 20 },
+    },
+    {
+      id: "communication",
+      title: "Communication",
+      instruction: "Choose the closest match.",
+      indicator: { key: "communication", label: "Communication" },
+      task: {
+        type: "choice",
+        prompt: "How easy is it to find the right words or express yourself today?",
+        options: ["Very difficult", "Difficult", "Moderate", "Easy", "Very easy"],
+      },
+    },
+    {
+      id: "functional-independence",
+      title: "Functional Independence",
+      instruction: "Rate each daily activity.",
+      indicator: { key: "independence", label: "Functional Independence" },
+      task: {
+        type: "rating-cards",
+        prompt: "How independent are you with these?",
+        items: ["Dressing", "Washing", "Eating", "Moving around"],
+      },
+    },
+    {
+      id: "social-wellness",
+      title: "Social & Emotional Wellness",
+      instruction: "Choose the closest match.",
+      indicator: { key: "social", label: "Social Wellness" },
+      task: {
+        type: "choice",
+        prompt: "How connected do you feel to family and friends right now?",
+        options: ["Very disconnected", "Somewhat disconnected", "Neutral", "Connected", "Very connected"],
+      },
     },
   ],
   activities: [
@@ -245,6 +296,45 @@ const pulmo: ModuleDef = {
         highLabel: "Very confident",
       },
     },
+    {
+      id: "respiratory-discomfort",
+      title: "Breathing Discomfort",
+      instruction: "Move the slider.",
+      indicator: { key: "discomfort", label: "Respiratory Discomfort", invert: true },
+      task: { type: "slider", prompt: "How much breathing discomfort do you notice right now?", lowLabel: "None", highLabel: "A lot", invert: true },
+    },
+    {
+      id: "daily-activity-ability",
+      title: "Daily Activity Ability",
+      instruction: "Choose the closest match.",
+      indicator: { key: "dailyActivity", label: "Daily Activity Ability" },
+      task: {
+        type: "choice",
+        prompt: "How much of your usual daily activity are you able to manage today?",
+        options: ["Almost none", "A little", "About half", "Most", "All of it"],
+      },
+    },
+    {
+      id: "stress",
+      title: "Stress",
+      instruction: "Move the slider.",
+      indicator: { key: "stress", label: "Stress", invert: true },
+      task: { type: "slider", prompt: "How stressed do you feel right now?", lowLabel: "Very calm", highLabel: "Very stressed", invert: true },
+    },
+    {
+      id: "sleep-rest",
+      title: "Sleep & Rest",
+      instruction: "Move the slider.",
+      indicator: { key: "sleep", label: "Sleep & Rest" },
+      task: { type: "slider", prompt: "How rested do you feel after sleep and rest?", lowLabel: "Not rested", highLabel: "Fully rested" },
+    },
+    {
+      id: "pulmo-wellness",
+      title: "Social & Emotional Wellness",
+      instruction: "Pick a face.",
+      indicator: { key: "mood", label: "Emotional Wellness" },
+      task: MOOD_TASK("How are you feeling today?"),
+    },
   ],
   activities: [
     {
@@ -379,6 +469,60 @@ const cardio: ModuleDef = {
         type: "rating-cards",
         prompt: "How confident are you with these today?",
         items: ["Sitting up", "Eating", "Moving around", "Personal activities", "Light daily tasks"],
+      },
+    },
+    {
+      id: "daily-movement",
+      title: "Daily Movement",
+      instruction: "Choose the closest match.",
+      indicator: { key: "dailyMovement", label: "Daily Movement" },
+      task: {
+        type: "choice",
+        prompt: "How much daily movement did you manage today?",
+        options: ["Almost none", "A little", "About half", "Most", "All of it"],
+      },
+    },
+    {
+      id: "cardio-independence",
+      title: "Functional Independence",
+      instruction: "Rate each daily activity.",
+      indicator: { key: "independence", label: "Functional Independence" },
+      task: {
+        type: "rating-cards",
+        prompt: "How independently do you manage these?",
+        items: ["Washing", "Dressing", "Eating", "Moving around"],
+      },
+    },
+    {
+      id: "energy-level",
+      title: "Energy Level",
+      instruction: "Move the slider.",
+      indicator: { key: "energy", label: "Energy Level" },
+      task: { type: "slider", prompt: "How is your energy right now?", lowLabel: "Low", highLabel: "High" },
+    },
+    {
+      id: "stress",
+      title: "Stress",
+      instruction: "Move the slider.",
+      indicator: { key: "stress", label: "Stress", invert: true },
+      task: { type: "slider", prompt: "How stressed do you feel right now?", lowLabel: "Very calm", highLabel: "Very stressed", invert: true },
+    },
+    {
+      id: "sleep-rest",
+      title: "Sleep & Rest",
+      instruction: "Move the slider.",
+      indicator: { key: "sleep", label: "Sleep & Rest" },
+      task: { type: "slider", prompt: "How rested do you feel after sleep and rest?", lowLabel: "Not rested", highLabel: "Fully rested" },
+    },
+    {
+      id: "social-engagement",
+      title: "Social Engagement",
+      instruction: "Choose the closest match.",
+      indicator: { key: "social", label: "Social Engagement" },
+      task: {
+        type: "choice",
+        prompt: "How much did you connect with family or friends today?",
+        options: ["Not at all", "A little", "Somewhat", "A good amount", "A lot"],
       },
     },
   ],
@@ -524,6 +668,45 @@ const ortho: ModuleDef = {
         items: ["Eating", "Writing", "Using phone", "Sitting", "Moving", "Personal activities"],
       },
     },
+    {
+      id: "steadiness",
+      title: "Steadiness",
+      instruction: "Keep a slow, steady rhythm.",
+      indicator: { key: "balance", label: "Steadiness" },
+      task: { type: "timed-taps", prompt: "Tap gently in time with the pulse.", seconds: 20 },
+    },
+    {
+      id: "strength-self-report",
+      title: "Strength Self-Report",
+      instruction: "Move the slider.",
+      indicator: { key: "strength", label: "Strength Self-Report" },
+      task: { type: "slider", prompt: "How strong does your body feel today?", lowLabel: "Very weak", highLabel: "Very strong" },
+    },
+    {
+      id: "emotional-state",
+      title: "Emotional State",
+      instruction: "Pick a face.",
+      indicator: { key: "mood", label: "Emotional State" },
+      task: MOOD_TASK("How are you feeling today?"),
+    },
+    {
+      id: "social-engagement",
+      title: "Social Engagement",
+      instruction: "Choose the closest match.",
+      indicator: { key: "social", label: "Social Engagement" },
+      task: {
+        type: "choice",
+        prompt: "How much did you connect with family or friends today?",
+        options: ["Not at all", "A little", "Somewhat", "A good amount", "A lot"],
+      },
+    },
+    {
+      id: "recovery-confidence",
+      title: "Recovery Confidence",
+      instruction: "Move the slider.",
+      indicator: { key: "confidence", label: "Recovery Confidence" },
+      task: { type: "slider", prompt: "How confident do you feel about your recovery journey?", lowLabel: "Low", highLabel: "High" },
+    },
   ],
   activities: [
     {
@@ -657,6 +840,49 @@ const onco: ModuleDef = {
         prompt: "How much were you able to participate in today's activities?",
         options: ["Not participating", "Low", "Moderate", "High"],
       },
+    },
+    {
+      id: "physical-functioning",
+      title: "Physical Functioning",
+      instruction: "Choose the closest match.",
+      indicator: { key: "dailyActivity", label: "Physical Functioning" },
+      task: {
+        type: "choice",
+        prompt: "How well are you able to move about and do light activities today?",
+        options: ["Very poorly", "Poorly", "Moderately", "Well", "Very well"],
+      },
+    },
+    {
+      id: "motivation",
+      title: "Motivation",
+      instruction: "Move the slider.",
+      indicator: { key: "motivation", label: "Motivation" },
+      task: { type: "slider", prompt: "How motivated do you feel about your recovery today?", lowLabel: "Low", highLabel: "High" },
+    },
+    {
+      id: "sleep-rest",
+      title: "Sleep & Rest",
+      instruction: "Move the slider.",
+      indicator: { key: "sleep", label: "Sleep & Rest" },
+      task: { type: "slider", prompt: "How rested do you feel after sleep and rest?", lowLabel: "Not rested", highLabel: "Fully rested" },
+    },
+    {
+      id: "social-connection",
+      title: "Social Connection",
+      instruction: "Choose the closest match.",
+      indicator: { key: "social", label: "Social Connection" },
+      task: {
+        type: "choice",
+        prompt: "How much did you connect with family or friends today?",
+        options: ["Not at all", "A little", "Somewhat", "A good amount", "A lot"],
+      },
+    },
+    {
+      id: "loneliness",
+      title: "Loneliness Indicator",
+      instruction: "Move the slider.",
+      indicator: { key: "loneliness", label: "Loneliness", invert: true },
+      task: { type: "slider", prompt: "How lonely do you feel right now?", lowLabel: "Very lonely", highLabel: "Not at all lonely", invert: true },
     },
   ],
   activities: [
@@ -798,6 +1024,53 @@ const geri: ModuleDef = {
       indicator: { key: "wellbeing", label: "Energy & Wellbeing" },
       task: { type: "checkin", prompt: "How are you feeling today?", fields: ["Energy", "Comfort"] },
     },
+    {
+      id: "mobility",
+      title: "Mobility",
+      instruction: "Choose the closest match.",
+      indicator: { key: "mobility", label: "Mobility" },
+      task: {
+        type: "choice",
+        prompt: "How comfortable is moving around today?",
+        options: ["Very difficult", "Difficult", "Moderate", "Comfortable", "Very comfortable"],
+      },
+    },
+    {
+      id: "steadiness",
+      title: "Steadiness",
+      instruction: "Keep a slow, steady rhythm.",
+      indicator: { key: "balance", label: "Steadiness" },
+      task: { type: "timed-taps", prompt: "Tap gently in time with the pulse.", seconds: 25 },
+    },
+    {
+      id: "independence",
+      title: "Independence",
+      instruction: "Rate each daily activity.",
+      indicator: { key: "independence", label: "Independence" },
+      task: {
+        type: "rating-cards",
+        prompt: "How independently do you manage these?",
+        items: ["Dressing", "Washing", "Eating", "Moving around"],
+      },
+    },
+    {
+      id: "social-interaction",
+      title: "Social Interaction",
+      instruction: "Choose the closest match.",
+      indicator: { key: "social", label: "Social Interaction" },
+      task: {
+        type: "choice",
+        prompt: "How much did you talk or spend time with family or friends today?",
+        options: ["Not at all", "A little", "Somewhat", "A good amount", "A lot"],
+      },
+    },
+    {
+      id: "recovery-confidence",
+      title: "Recovery Confidence",
+      instruction: "Move the slider.",
+      indicator: { key: "confidence", label: "Recovery Confidence" },
+      task: { type: "slider", prompt: "How confident do you feel about your recovery?", lowLabel: "Low", highLabel: "High" },
+    },
   ],
   activities: [
     {
@@ -938,6 +1211,58 @@ const pedia: ModuleDef = {
         options: ["Not at all", "A little", "Quite a lot", "Lots"],
       },
     },
+    {
+      id: "motor-activity",
+      title: "Motor Activity",
+      instruction: "Tap along with the music!",
+      indicator: { key: "motor", label: "Motor Activity" },
+      task: { type: "timed-taps", prompt: "Tap along with the music.", seconds: 20 },
+    },
+    {
+      id: "recognition",
+      title: "Recognition",
+      instruction: "Remember the pictures.",
+      indicator: { key: "recognition", label: "Recognition" },
+      task: {
+        type: "memory-recall",
+        items: ["Dog", "Ball", "Cup", "Star"],
+        distractors: ["Hat", "Bird", "Boat"],
+        showMs: 8000,
+      },
+    },
+    {
+      id: "communication",
+      title: "Communication",
+      instruction: "Choose the closest match.",
+      indicator: { key: "communication", label: "Communication" },
+      task: {
+        type: "choice",
+        prompt: "How easy is it to tell others how you feel?",
+        options: ["Very hard", "Hard", "Okay", "Easy", "Very easy"],
+      },
+    },
+    {
+      id: "engagement",
+      title: "How Much Fun?",
+      instruction: "Choose the closest match.",
+      indicator: { key: "engagement", label: "Engagement" },
+      task: {
+        type: "choice",
+        prompt: "How much fun are your recovery activities?",
+        options: ["Not fun", "A little fun", "Okay", "Fun", "Super fun"],
+      },
+    },
+    {
+      id: "helper-tasks",
+      title: "Helper Tasks",
+      instruction: "Rate each helper task.",
+      indicator: { key: "participation", label: "Participation" },
+      task: {
+        type: "rating-cards",
+        prompt: "How are you doing with these?",
+        items: ["Getting dressed", "Eating", "Tidying toys", "Moving around"],
+      },
+    },
   ],
   activities: [
     {
@@ -1025,4 +1350,16 @@ export function moduleCategories(m: ModuleDef): string[] {
 
 export function findModuleActivity(m: ModuleDef, id: string) {
   return m.activities.find((a) => a.id === id);
+}
+
+/** Universal recovery dimensions an assessment feeds (explicit or derived from its indicator). */
+export function dimensionsForAssessment(a: ModuleAssessment): Dimension[] {
+  return a.dimensions ?? dimensionsForIndicator(a.indicator.key);
+}
+
+/** True when a higher raw task score means a worse state (fatigue, stress, loneliness…). */
+export function assessmentInverts(a: ModuleAssessment): boolean {
+  if (a.indicator.invert) return true;
+  const task = a.task as { invert?: boolean };
+  return task.invert === true;
 }

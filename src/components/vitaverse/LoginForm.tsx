@@ -2,7 +2,8 @@ import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Card, Eyebrow, GhostLink, Page, PrimaryButton, Sub, Title } from "@/components/vitaverse/Shell";
 import { findPatient } from "@/lib/patients";
-import { getState, setState, type VitaState } from "@/lib/vitaverse-store";
+import { getRecord } from "@/lib/vitaverse-db";
+import { setState, type VitaState } from "@/lib/vitaverse-store";
 
 export type LoginConfig = {
   title: string;
@@ -13,10 +14,6 @@ export type LoginConfig = {
   next: string;
 };
 
-function getPrev() {
-  return getState().patient?.id ?? null;
-}
-
 export function LoginScreen({ config }: { config: LoginConfig }) {
   const navigate = useNavigate();
   const [a, setA] = useState("");
@@ -26,20 +23,14 @@ export function LoginScreen({ config }: { config: LoginConfig }) {
   const submit = () => {
     if (config.role === "patient") {
       const p = findPatient(a, b);
-      if (!p) {
+      const record = p ? getRecord(p.id) : null;
+      if (!p || !record) {
         setError("No patient found with that name and ID.");
         return;
       }
       setError("");
-      const prev = getPrev();
-      // A different patient starts a fresh recovery journey.
-      if (prev !== p.id) {
-        setState({
-          indicators: {}, results: {}, baselineDone: false, reassessments: 0, twinCreated: false,
-          activities: [], xp: 0, achievements: [], history: [], lastUpdate: null,
-        });
-      }
-      setState({ role: "patient", patient: { name: p.name, id: p.id, moduleId: p.moduleId } });
+      // The assigned module always comes from the patient's stored record.
+      setState({ role: "patient", patient: { name: p.name, id: p.id, moduleId: record.moduleId } });
       navigate({ to: "/patient/welcome" });
       return;
     }
