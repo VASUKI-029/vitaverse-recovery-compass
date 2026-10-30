@@ -1,4 +1,4 @@
-import type { Dimension } from "./dimensions";
+import { dimensionsForIndicator, type Dimension } from "./dimensions";
 
 export type TaskSpec =
   | { type: "memory-recall"; items: string[]; distractors: string[]; showMs: number }
