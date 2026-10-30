@@ -1,3 +1,5 @@
+import type { Dimension } from "./dimensions";
+
 export type TaskSpec =
   | { type: "memory-recall"; items: string[]; distractors: string[]; showMs: number }
   | { type: "selective-attention"; targetLabel: string; seconds: number }
@@ -21,6 +23,8 @@ export type ModuleAssessment = {
   title: string;
   instruction: string;
   indicator: Indicator;
+  /** Universal VITAVERSE recovery dimensions this assessment feeds. */
+  dimensions?: Dimension[];
   task: TaskSpec;
 };
 
